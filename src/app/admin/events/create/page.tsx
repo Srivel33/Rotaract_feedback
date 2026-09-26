@@ -165,6 +165,7 @@ export default function CreateEventPage() {
                 <div className={styles.dragHandleBar}>
                   <div className={styles.dragPill}>
                     <button type="button" onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} title="Move Up">▲</button>
+                    <span style={{ cursor: 'grab', display: 'flex', alignItems: 'center' }}>⋮⋮</span>
                     <button type="button" onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} title="Move Down">▼</button>
                   </div>
                 </div>
@@ -263,7 +264,7 @@ export default function CreateEventPage() {
 
           <div className={styles.addBtnContainer}>
             <button type="button" onClick={handleAddQuestion} className={styles.addQuestionBtn}>
-              <span>+</span>
+              + Add new question
             </button>
           </div>
 

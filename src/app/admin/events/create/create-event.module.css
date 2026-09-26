@@ -4,7 +4,7 @@
   background: var(--color-jet-black);
   color: var(--color-off-white);
   font-family: var(--font-family-sans);
-  max-width: 900px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -42,7 +42,7 @@
   border: 1px solid #333;
   border-top: 8px solid var(--color-ocean-blue-light);
   border-radius: 8px;
-  padding: 2.5rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   margin-bottom: 2rem;
 }
@@ -69,13 +69,13 @@
 
 .input {
   width: 100%;
-  padding: 12px;
+  padding: 8px 12px;
   border-radius: 4px;
   border: none;
   border-bottom: 1px solid #444;
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   transition: 0.3s;
 }
 
@@ -86,14 +86,14 @@
 }
 
 .questionsHeader {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   margin-bottom: 1rem;
 }
 
 .questionsHeader h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: #fff;
-  font-weight: 400;
+  font-weight: 500;
   margin: 0;
 }
 
@@ -101,39 +101,39 @@
 .questionsList {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 /* Google Form Card Style */
 .questionCard {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #151515;
+  border: 1px solid #2a2a2a;
   border-radius: 8px;
-  padding: 0 1.5rem 1.5rem 1.5rem;
+  padding: 0 1.25rem 1rem 1.25rem;
   position: relative;
   transition: 0.2s;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .questionCard:focus-within {
-  border-left: 6px solid var(--color-ocean-blue);
-  background: #1e1e1e;
+  border-left: 4px solid var(--color-ocean-blue);
+  background: #1a1a1a;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .dragHandleBar {
   display: flex;
   justify-content: center;
-  padding: 8px 0;
+  padding: 4px 0;
   cursor: grab;
 }
 
 .dragPill {
   display: flex;
   gap: 8px;
-  color: #666;
+  color: #555;
   opacity: 0.5;
   transition: 0.2s;
+  font-size: 0.75rem;
 }
 .questionCard:hover .dragPill {
   opacity: 1;
@@ -151,19 +151,19 @@
 
 .questionTopRow {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .questionTitleInput {
   flex: 1;
   background: rgba(255,255,255,0.03);
   border: none;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid #333;
   color: #fff;
-  font-size: 1.25rem;
-  padding: 12px;
+  font-size: 1rem;
+  padding: 8px 12px;
   border-radius: 4px 4px 0 0;
   transition: 0.2s;
 }
@@ -174,13 +174,13 @@
 }
 
 .questionTypeSelect {
-  width: 220px;
+  width: 180px;
   background: #111;
-  border: 1px solid #444;
+  border: 1px solid #333;
   color: #fff;
-  padding: 12px;
+  padding: 8px 12px;
   border-radius: 4px;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 .questionTypeSelect:focus {
@@ -189,38 +189,39 @@
 }
 
 .questionMiddleRow {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 0 12px;
 }
 
 .placeholderText {
-  color: #666;
-  font-size: 0.9rem;
-  border-bottom: 1px dotted #444;
-  padding-bottom: 8px;
+  color: #555;
+  font-size: 0.85rem;
+  border-bottom: 1px dotted #333;
+  padding-bottom: 6px;
   width: 60%;
 }
 
 .placeholderRating {
-  color: #555;
-  font-size: 1.5rem;
+  color: #444;
+  font-size: 1.2rem;
   letter-spacing: 4px;
 }
 
 .optionsContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 
 .optionRow {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .optionIndicator {
-  color: #666;
-  font-size: 1.2rem;
+  color: #555;
+  font-size: 1rem;
   width: 20px;
   text-align: center;
 }
@@ -231,8 +232,8 @@
   border: none;
   border-bottom: 1px solid transparent;
   color: #fff;
-  font-size: 1rem;
-  padding: 6px 0;
+  font-size: 0.9rem;
+  padding: 4px 0;
   transition: 0.2s;
 }
 .optionInput:focus {
@@ -280,19 +281,20 @@
   justify-content: flex-end;
   align-items: center;
   gap: 1rem;
-  border-top: 1px solid #333;
-  padding-top: 1rem;
+  border-top: 1px solid #222;
+  padding-top: 0.8rem;
+  margin-top: 1rem;
 }
 
 .iconBtn {
   background: transparent;
   border: none;
-  color: #888;
+  color: #777;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: 0.2s;
-  padding: 5px;
-  border-radius: 50%;
+  padding: 4px;
+  border-radius: 4px;
 }
 .iconBtn:hover {
   color: #fff;
@@ -345,42 +347,39 @@
   background: var(--color-ocean-blue-light);
 }
 
-/* Floating Add Button */
+/* Inline Add Button */
 .addBtnContainer {
-  position: sticky;
-  bottom: 2rem;
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
-  pointer-events: none; /* Let clicks pass through */
+  margin-top: 1.5rem;
 }
 
 .addQuestionBtn {
-  pointer-events: auto;
-  background: #fff;
-  color: #111;
-  border: none;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  font-size: 1.8rem;
+  background: transparent;
+  color: #aaa;
+  border: 1px dashed #444;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   transition: 0.2s;
 }
 
 .addQuestionBtn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  background: rgba(255,255,255,0.02);
+  color: #fff;
+  border-color: var(--color-ocean-blue-light);
 }
 
 .submitSection {
-  margin-top: 4rem;
+  margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
+  border-top: 1px solid #222;
+  padding-top: 1.5rem;
 }
 
 .publishBtn {

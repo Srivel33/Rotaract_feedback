@@ -12,6 +12,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
   const [eventData, setEventData] = useState<any>(null);
   const [responses, setResponses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<'respondent' | 'question'>('respondent');
 
   useEffect(() => {
     Promise.all([
@@ -136,13 +137,38 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
           )}
         </div>
 
-        {/* LINEAR RESPONSES FEED */}
+        {/* FEED SECTION */}
         <div className={styles.feedCard}>
-          <h3>Detailed Feedback Feed</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+            <h3 style={{ margin: 0, border: 'none', padding: 0 }}>Detailed Feedback Feed</h3>
+            
+            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <button 
+                onClick={() => setViewMode('respondent')}
+                style={{ 
+                  background: viewMode === 'respondent' ? 'var(--color-ocean-blue)' : 'transparent', 
+                  color: viewMode === 'respondent' ? '#fff' : '#aaa', 
+                  border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', transition: '0.2s' 
+                }}
+              >
+                By Respondent
+              </button>
+              <button 
+                onClick={() => setViewMode('question')}
+                style={{ 
+                  background: viewMode === 'question' ? 'var(--color-ocean-blue)' : 'transparent', 
+                  color: viewMode === 'question' ? '#fff' : '#aaa', 
+                  border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', transition: '0.2s' 
+                }}
+              >
+                By Question
+              </button>
+            </div>
+          </div>
           
           {responses.length === 0 ? (
             <p style={{ color: '#aaa', fontStyle: 'italic', marginTop: '1rem' }}>No feedback submitted yet.</p>
-          ) : (
+          ) : viewMode === 'respondent' ? (
             <div className={styles.feedList}>
               {responses.map((res: any) => (
                 <div key={res.id} className={styles.feedItem}>
@@ -167,6 +193,36 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
                   </div>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className={styles.feedList}>
+              {eventData.questions.map((q: any) => {
+                const questionAnswers = responses.map(res => {
+                  const ans = res.answers.find((a: any) => a.questionId === q.id);
+                  return ans ? { user: res.user, value: ans.value, date: res.createdAt } : null;
+                }).filter(Boolean);
+
+                if (questionAnswers.length === 0) return null;
+
+                return (
+                  <div key={q.id} className={styles.feedItem} style={{ borderLeft: '4px solid var(--color-ocean-blue-light)' }}>
+                    <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>{q.text}</h4>
+                    <div className={styles.feedAnswers}>
+                      {questionAnswers.map((qa: any, idx: number) => (
+                        <div key={idx} className={styles.answerBlock} style={{ borderLeft: 'none', background: 'rgba(255,255,255,0.03)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+                            <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{qa.user.name}</span>
+                            <span style={{ fontSize: '0.75rem', color: '#666' }}>{new Date(qa.date).toLocaleDateString()}</span>
+                          </div>
+                          <div className={styles.answerValue}>
+                            {q.type === 'RATING' ? `${qa.value} ★` : qa.value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
