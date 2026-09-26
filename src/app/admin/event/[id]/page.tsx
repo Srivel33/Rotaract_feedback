@@ -36,8 +36,8 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
   }, [resolvedParams.id]);
 
   const handleExport = () => {
-    if (responses.length === 0) {
-      alert("No responses to export.");
+    if (!eventData || responses.length === 0) {
+      alert("No responses or event data to export.");
       return;
     }
 
