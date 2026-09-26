@@ -1,0 +1,127 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-jet-black);
+}
+
+.sidebar {
+  width: 250px;
+  background: rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.sidebarHeader h2 {
+  color: var(--color-ocean-blue-light);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navButton {
+  background: transparent;
+  border: none;
+  color: #a0a0a0;
+  text-align: left;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.navButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-off-white);
+}
+
+.navButton.active {
+  background: var(--color-ocean-blue);
+  color: var(--color-jet-black);
+  font-weight: 600;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem 3rem;
+  overflow-y: auto;
+}
+
+.sectionHeader {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionHeader h1 {
+  font-size: 2rem;
+  color: var(--color-off-white);
+}
+
+/* Card layout for sections */
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: var(--color-off-white);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--color-ocean-blue-light);
+}
+
+/* Table styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table th {
+  color: var(--color-ocean-blue-light);
+  font-weight: 600;
+  font-family: var(--font-heading);
+}
+
+.table td {
+  color: #ccc;
+}
