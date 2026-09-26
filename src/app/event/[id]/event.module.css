@@ -119,3 +119,62 @@
   width: 100%;
   margin-top: 1rem;
 }
+
+/* Animations for one-by-one flow */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animatedStep {
+  animation: slideUpFade 0.4s ease-out forwards;
+}
+
+.stepIndicator {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.buttonRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.navBtn {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navBtnBack {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #aaa;
+}
+.navBtnBack:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.navBtnNext {
+  background: var(--color-ocean-blue);
+  border: none;
+  color: #fff;
+}
+.navBtnNext:hover {
+  background: var(--color-ocean-blue-light);
+}

@@ -7,7 +7,7 @@ import styles from './event-details.module.css';
 
 interface EventData {
   id: string; title: string; location: string; date: string;
-  questions: {id: string; type: string; text: string}[];
+  questions: {id: string; type: string; text: string; options?: string}[];
 }
 
 interface ResponseData {
@@ -90,6 +90,30 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
     });
   }
 
+  // Calculate Choice Breakdowns for RADIO, CHECKBOX, DROPDOWN
+  const choiceQuestions = eventData?.questions.filter(q => ['RADIO', 'CHECKBOX', 'DROPDOWN'].includes(q.type)) || [];
+  const choiceStats: Record<string, Record<string, number>> = {};
+  
+  choiceQuestions.forEach(q => {
+    choiceStats[q.id] = {};
+    const options = JSON.parse(q.options || "[]") as string[];
+    options.forEach(opt => choiceStats[q.id][opt] = 0);
+
+    responses.forEach(r => {
+      const ans = r.answers.find(a => a.questionId === q.id);
+      if (ans) {
+        if (q.type === 'CHECKBOX') {
+          const selected = ans.value.split(',');
+          selected.forEach(s => {
+            if (choiceStats[q.id][s] !== undefined) choiceStats[q.id][s]++;
+          });
+        } else {
+          if (choiceStats[q.id][ans.value] !== undefined) choiceStats[q.id][ans.value]++;
+        }
+      }
+    });
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -145,6 +169,28 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
               ))}
             </div>
           )}
+          {choiceQuestions.map(q => {
+            const stats = choiceStats[q.id];
+            return (
+              <div key={q.id} style={{ marginTop: '2rem' }}>
+                <h4 style={{ color: '#aaa', marginBottom: '1rem', fontSize: '1rem' }}>{q.text}</h4>
+                {Object.entries(stats).map(([option, count]) => {
+                  const percentage = responses.length > 0 ? Math.round((count / responses.length) * 100) : 0;
+                  return (
+                    <div key={option} style={{ marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '6px' }}>
+                        <span style={{ color: '#fff' }}>{option}</span>
+                        <span style={{ color: '#aaa' }}>{count} ({percentage}%)</span>
+                      </div>
+                      <div style={{ width: '100%', background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px' }}>
+                        <div style={{ background: 'var(--color-ocean-blue-light)', height: '100%', borderRadius: '4px', width: `${percentage}%`, transition: 'width 0.5s ease-in-out' }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
 
         {/* FEED SECTION */}
