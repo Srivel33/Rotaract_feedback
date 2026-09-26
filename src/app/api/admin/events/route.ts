@@ -33,9 +33,10 @@ export async function POST(request: Request) {
         date: new Date(date),
         questions: {
           create: questions && questions.length > 0 ? questions.map((q: any) => {
-            // Convert comma-separated options to JSON string
             let parsedOptions = null;
-            if (q.options && q.options.trim() !== '') {
+            if (Array.isArray(q.options)) {
+              parsedOptions = JSON.stringify(q.options.filter(o => o.trim() !== ''));
+            } else if (typeof q.options === 'string' && q.options.trim() !== '') {
               const optsArray = q.options.split(',').map((o: string) => o.trim()).filter((o:string) => o);
               parsedOptions = JSON.stringify(optsArray);
             }

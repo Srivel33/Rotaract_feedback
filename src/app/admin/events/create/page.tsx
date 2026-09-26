@@ -5,21 +5,48 @@ import { useRouter } from 'next/navigation';
 import styles from './create-event.module.css';
 import Link from 'next/link';
 
+type QuestionType = 'TEXT' | 'RATING' | 'EMOJI' | 'RADIO' | 'CHECKBOX' | 'DROPDOWN';
+
+interface Question {
+  id: number;
+  type: QuestionType;
+  text: string;
+  options: string[];
+  isRequired: boolean;
+}
+
 export default function CreateEventPage() {
   const router = useRouter();
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
-  const [newQuestions, setNewQuestions] = useState<{id: number, type: string, text: string, options?: string, isRequired: boolean}[]>([]);
+  
+  const [newQuestions, setNewQuestions] = useState<Question[]>([
+    { id: Date.now(), type: 'RADIO', text: 'Untitled Question', options: ['Option 1'], isRequired: false }
+  ]);
   const [loading, setLoading] = useState(false);
 
   const handleAddQuestion = () => {
-    // Default to TEXT when adding a new row
-    setNewQuestions([...newQuestions, { id: Date.now(), type: 'TEXT', text: '', options: '', isRequired: true }]);
+    setNewQuestions([...newQuestions, { id: Date.now(), type: 'RADIO', text: '', options: ['Option 1'], isRequired: false }]);
   };
 
-  const handleUpdateQuestion = (id: number, field: string, value: any) => {
-    setNewQuestions(newQuestions.map(q => q.id === id ? { ...q, [field]: value } : q));
+  const handleUpdateQuestion = (id: number, field: keyof Question, value: any) => {
+    setNewQuestions(newQuestions.map(q => {
+      if (q.id === id) {
+        const updated = { ...q, [field]: value };
+        // If switching to an options-based type and it has no options, initialize it
+        if (field === 'type' && ['RADIO', 'CHECKBOX', 'DROPDOWN', 'EMOJI'].includes(value)) {
+          if (!updated.options || updated.options.length === 0) {
+            updated.options = ['Option 1'];
+          }
+          if (value === 'EMOJI' && (!updated.options || updated.options.length === 0 || updated.options[0] === 'Option 1')) {
+             updated.options = ['🤩 Excellent', '🙂 Good', '😐 Average', '☹️ Poor'];
+          }
+        }
+        return updated;
+      }
+      return q;
+    }));
   };
 
   const handleRemoveQuestion = (id: number) => {
@@ -34,6 +61,36 @@ export default function CreateEventPage() {
       [newQs[index + 1], newQs[index]] = [newQs[index], newQs[index + 1]];
     }
     setNewQuestions(newQs);
+  };
+
+  const handleUpdateOption = (qId: number, oIndex: number, val: string) => {
+    setNewQuestions(newQuestions.map(q => {
+      if (q.id === qId) {
+        const newOpts = [...q.options];
+        newOpts[oIndex] = val;
+        return { ...q, options: newOpts };
+      }
+      return q;
+    }));
+  };
+
+  const handleAddOption = (qId: number) => {
+    setNewQuestions(newQuestions.map(q => {
+      if (q.id === qId) {
+        return { ...q, options: [...q.options, `Option ${q.options.length + 1}`] };
+      }
+      return q;
+    }));
+  };
+
+  const handleRemoveOption = (qId: number, oIndex: number) => {
+    setNewQuestions(newQuestions.map(q => {
+      if (q.id === qId) {
+        const newOpts = q.options.filter((_, idx) => idx !== oIndex);
+        return { ...q, options: newOpts };
+      }
+      return q;
+    }));
   };
 
   const handlePublish = async (e: React.FormEvent) => {
@@ -102,81 +159,117 @@ export default function CreateEventPage() {
 
           <div className={styles.questionsList}>
             {newQuestions.map((q, index) => (
-              <div key={q.id} className={styles.questionRow}>
+              <div key={q.id} className={styles.questionCard}>
                 
-                {/* Drag / Reorder Controls */}
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <button type="button" onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} style={{ background: 'transparent', border: 'none', color: index === 0 ? '#333' : '#888', cursor: 'pointer', fontSize: '0.8rem' }}>▲</button>
-                  <button type="button" onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} style={{ background: 'transparent', border: 'none', color: index === newQuestions.length - 1 ? '#333' : '#888', cursor: 'pointer', fontSize: '0.8rem' }}>▼</button>
+                {/* Drag Handle Top Center */}
+                <div className={styles.dragHandleBar}>
+                  <div className={styles.dragPill}>
+                    <button type="button" onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} title="Move Up">▲</button>
+                    <button type="button" onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} title="Move Down">▼</button>
+                  </div>
                 </div>
 
-                {/* Question Text */}
-                <input 
-                  type="text" 
-                  className={styles.inlineInput} 
-                  placeholder="Question text..." 
-                  value={q.text} 
-                  onChange={(e) => handleUpdateQuestion(q.id, 'text', e.target.value)} 
-                  required
-                />
-
-                {/* Question Type Selector */}
-                <select 
-                  className={styles.inlineSelect} 
-                  value={q.type} 
-                  onChange={(e) => handleUpdateQuestion(q.id, 'type', e.target.value)}
-                >
-                  <option value="TEXT">Long Text</option>
-                  <option value="RATING">Star Rating</option>
-                  <option value="EMOJI">Emoji Reaction</option>
-                  <option value="RADIO">Multiple Choice</option>
-                  <option value="CHECKBOX">Checkboxes</option>
-                  <option value="DROPDOWN">Dropdown</option>
-                </select>
-
-                {/* Conditional Options Input for specific types */}
-                {['RADIO', 'CHECKBOX', 'DROPDOWN'].includes(q.type) && (
+                {/* Top Row: Question Text & Type Dropdown */}
+                <div className={styles.questionTopRow}>
                   <input 
                     type="text" 
-                    className={styles.inlineOptionsInput} 
-                    placeholder="Options (comma-separated)..." 
-                    value={q.options || ''} 
-                    onChange={(e) => handleUpdateQuestion(q.id, 'options', e.target.value)} 
+                    className={styles.questionTitleInput} 
+                    placeholder="Question text" 
+                    value={q.text} 
+                    onChange={(e) => handleUpdateQuestion(q.id, 'text', e.target.value)} 
                     required
                   />
-                )}
-                
-                {/* Placeholder spacer if options are not needed to keep flex layout balanced */}
-                {!['RADIO', 'CHECKBOX', 'DROPDOWN'].includes(q.type) && (
-                  <div style={{ flex: 1.5 }}></div>
-                )}
+                  <select 
+                    className={styles.questionTypeSelect} 
+                    value={q.type} 
+                    onChange={(e) => handleUpdateQuestion(q.id, 'type', e.target.value as QuestionType)}
+                  >
+                    <option value="TEXT">Short/Long answer</option>
+                    <option value="RADIO">Multiple choice</option>
+                    <option value="CHECKBOX">Checkboxes</option>
+                    <option value="DROPDOWN">Dropdown</option>
+                    <option value="RATING">Star Rating</option>
+                    <option value="EMOJI">Emoji Reaction</option>
+                  </select>
+                </div>
 
-                {/* Required Toggle */}
-                <label className={styles.requiredToggle}>
-                  <input 
-                    type="checkbox" 
-                    checked={q.isRequired} 
-                    onChange={(e) => handleUpdateQuestion(q.id, 'isRequired', e.target.checked)} 
-                    style={{ width: '14px', height: '14px', accentColor: 'var(--color-ocean-blue-light)' }}
-                  /> 
-                  Req.
-                </label>
+                {/* Middle Row: Dynamic Preview & Options */}
+                <div className={styles.questionMiddleRow}>
+                  {q.type === 'TEXT' && (
+                    <div className={styles.placeholderText}>Long answer text</div>
+                  )}
 
-                {/* Delete Button */}
-                <button type="button" className={styles.iconBtn} onClick={() => handleRemoveQuestion(q.id)} title="Delete Question">✕</button>
+                  {q.type === 'RATING' && (
+                    <div className={styles.placeholderRating}>★ ★ ★ ★ ★</div>
+                  )}
+
+                  {['RADIO', 'CHECKBOX', 'DROPDOWN', 'EMOJI'].includes(q.type) && (
+                    <div className={styles.optionsContainer}>
+                      {q.options.map((opt, oIndex) => (
+                        <div key={oIndex} className={styles.optionRow}>
+                          <div className={styles.optionIndicator}>
+                            {q.type === 'RADIO' || q.type === 'EMOJI' ? '○' : q.type === 'CHECKBOX' ? '☐' : `${oIndex + 1}.`}
+                          </div>
+                          <input 
+                            type="text" 
+                            className={styles.optionInput} 
+                            value={opt} 
+                            onChange={(e) => handleUpdateOption(q.id, oIndex, e.target.value)} 
+                            placeholder={q.type === 'EMOJI' ? 'e.g. 🤩 Excellent' : `Option ${oIndex + 1}`}
+                            required
+                          />
+                          {q.options.length > 1 && (
+                            <button type="button" className={styles.removeOptionBtn} onClick={() => handleRemoveOption(q.id, oIndex)}>✕</button>
+                          )}
+                        </div>
+                      ))}
+                      <div className={styles.addOptionRow}>
+                        <div className={styles.optionIndicator}>
+                          {q.type === 'RADIO' || q.type === 'EMOJI' ? '○' : q.type === 'CHECKBOX' ? '☐' : `${q.options.length + 1}.`}
+                        </div>
+                        <button type="button" className={styles.addOptionBtn} onClick={() => handleAddOption(q.id)}>
+                          Add option
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Row: Controls */}
+                <div className={styles.questionBottomRow}>
+                  <button type="button" className={styles.iconBtn} onClick={() => {
+                    const dupe = {...q, id: Date.now()};
+                    setNewQuestions([...newQuestions.slice(0, index+1), dupe, ...newQuestions.slice(index+1)]);
+                  }} title="Duplicate">
+                    📄
+                  </button>
+                  <button type="button" className={styles.iconBtn} onClick={() => handleRemoveQuestion(q.id)} title="Delete">
+                    🗑️
+                  </button>
+                  <div className={styles.divider}></div>
+                  <label className={styles.requiredToggle}>
+                    Required
+                    <input 
+                      type="checkbox" 
+                      className={styles.switchToggle}
+                      checked={q.isRequired} 
+                      onChange={(e) => handleUpdateQuestion(q.id, 'isRequired', e.target.checked)} 
+                    /> 
+                  </label>
+                </div>
               </div>
             ))}
           </div>
 
           <div className={styles.addBtnContainer}>
-            <button type="button" onClick={handleAddQuestion} className={styles.addBtn}>
-              + Add Question
+            <button type="button" onClick={handleAddQuestion} className={styles.addQuestionBtn}>
+              <span>+</span>
             </button>
           </div>
 
           <div className={styles.submitSection}>
             <button type="submit" className={styles.publishBtn} disabled={loading}>
-              {loading ? "Publishing..." : "🚀 Publish Event & Form"}
+              {loading ? "Publishing..." : "Publish Event & Form"}
             </button>
           </div>
 

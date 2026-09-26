@@ -4,13 +4,6 @@ import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './event.module.css';
 
-const EMOJIS = [
-  { id: '🤩', label: 'Excellent' },
-  { id: '🙂', label: 'Good' },
-  { id: '😐', label: 'Average' },
-  { id: '☹️', label: 'Poor' }
-];
-
 export default function EventFeedbackPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
@@ -126,19 +119,22 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
                 </div>
               )}
 
-              {q.type === 'EMOJI' && (
+              {q.type === 'EMOJI' && q.options && (
                 <div className={styles.emojiContainer}>
-                  {EMOJIS.map((item) => (
-                    <button
-                      type="button"
-                      key={item.id}
-                      className={`${styles.emojiOption} ${answers[q.id] === item.id ? styles.selected : ''}`}
-                      onClick={() => handleAnswerChange(q.id, item.id)}
-                      title={item.label}
-                    >
-                      {item.id}
-                    </button>
-                  ))}
+                  {JSON.parse(q.options).map((opt: string, i: number) => {
+                    const emojiIcon = opt.split(' ')[0]; // E.g., extracts "🤩" from "🤩 Excellent"
+                    return (
+                      <button
+                        type="button"
+                        key={i}
+                        className={`${styles.emojiOption} ${answers[q.id] === opt ? styles.selected : ''}`}
+                        onClick={() => handleAnswerChange(q.id, opt)}
+                        title={opt}
+                      >
+                        {emojiIcon}
+                      </button>
+                    )
+                  })}
                 </div>
               )}
 
