@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const eventId = searchParams.get('eventId');
+
     const responses = await prisma.response.findMany({
+      where: eventId ? { eventId } : undefined,
       include: {
         user: true,
         event: true,
