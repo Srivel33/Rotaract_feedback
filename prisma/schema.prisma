@@ -29,6 +29,7 @@ model Event {
   location  String
   date      DateTime
   isLocked  Boolean    @default(false) // Admin locks/unlocks feedback
+  isArchived Boolean   @default(false) // For soft-deletes to keep history
   createdAt DateTime   @default(now())
   questions Question[]
   responses Response[]
