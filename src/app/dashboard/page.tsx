@@ -1,41 +1,46 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './dashboard.module.css';
 
-// Mock data until we connect to the database API
-const MOCK_EVENTS = [
-  {
-    id: "evt_1",
-    title: "Youth Leadership Summit 2024",
-    location: "Chennai",
-    date: "25 May 2024",
-    isCompleted: false,
-  },
-  {
-    id: "evt_2",
-    title: "Community Service Drive",
-    location: "Coimbatore",
-    date: "18 May 2024",
-    isCompleted: false,
-  },
-  {
-    id: "evt_3",
-    title: "Rotaract Training Program",
-    location: "Madurai",
-    date: "10 May 2024",
-    isCompleted: true,
-  }
-];
-
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<'PENDING' | 'COMPLETED'>('PENDING');
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      window.location.href = '/auth';
+      return;
+    }
+
+    fetch(`/api/user/events?email=${encodeURIComponent(userEmail)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.events) {
+          setEvents(data.events);
+        } else {
+          setError(data.error || 'Failed to load events');
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('An error occurred while fetching events');
+        setLoading(false);
+      });
+  }, []);
 
   // Filter events based on active tab
-  const displayedEvents = MOCK_EVENTS.filter(event => 
+  const displayedEvents = events.filter(event => 
     activeTab === 'PENDING' ? !event.isCompleted : event.isCompleted
   );
+
+  if (loading) {
+    return <main className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}><h2>Loading...</h2></main>;
+  }
 
   return (
     <main className={styles.container}>
@@ -69,7 +74,7 @@ export default function DashboardPage() {
             <div key={event.id} className={styles.eventCard}>
               <h2 className={styles.eventTitle}>{event.title}</h2>
               <div className={styles.eventMeta}>
-                <span className={styles.metaItem}>📅 {event.date}</span>
+                <span className={styles.metaItem}>📅 {new Date(event.date).toLocaleDateString()}</span>
                 <span className={styles.metaItem}>📍 {event.location}</span>
               </div>
               
