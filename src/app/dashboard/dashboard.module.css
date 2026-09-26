@@ -1,0 +1,142 @@
+.container {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background-color: var(--color-jet-black);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: var(--color-off-white);
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--color-ocean-blue-light);
+  font-size: 1.1rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.tab.active {
+  color: var(--color-off-white);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1rem;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-ocean-blue-light);
+  border-radius: 3px 3px 0 0;
+  animation: slide-in 0.3s ease;
+}
+
+@keyframes slide-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.eventGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.eventCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.eventCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  border-color: rgba(72, 202, 228, 0.3);
+}
+
+/* Subtle gradient on hover */
+.eventCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(72, 202, 228, 0.1), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+}
+
+.eventCard:hover::before {
+  left: 150%;
+}
+
+.eventTitle {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-off-white);
+}
+
+.eventMeta {
+  display: flex;
+  justify-content: space-between;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.feedbackBtn {
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+
+.completedBadge {
+  background: rgba(72, 202, 228, 0.1);
+  color: var(--color-ocean-blue-light);
+  border: 1px solid rgba(72, 202, 228, 0.3);
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
