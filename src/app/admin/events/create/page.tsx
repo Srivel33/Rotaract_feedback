@@ -38,7 +38,7 @@ export default function CreateEventPage() {
       if (q.id === id) {
         const updated = { ...q, [field]: value };
         // If switching to an options-based type and it has no options, initialize it
-        if (field === 'type' && ['RADIO', 'CHECKBOX', 'DROPDOWN', 'EMOJI'].includes(value)) {
+        if (field === 'type' && typeof value === 'string' && ['RADIO', 'CHECKBOX', 'DROPDOWN', 'EMOJI'].includes(value)) {
           if (!updated.options || updated.options.length === 0) {
             updated.options = ['Option 1'];
           }

@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
   const [events, setEvents] = useState<{id: string; title: string; location: string; date: string; isLocked: boolean; _count?: { responses: number }}[]>([]);
   // Edit State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
-  const [editEventData, setEditEventData] = useState<Partial<{id: string; title: string; location: string; date: string | Date}>>({});
+  const [editEventData, setEditEventData] = useState<Partial<{id: string; title: string; location: string; date: string; isLocked: boolean; isArchived: boolean}>>({});
 
   useEffect(() => {
     if (activeTab === 'ALLOWLIST') {
@@ -236,7 +236,7 @@ export default function AdminDashboardPage() {
                       {editingEventId === event.id ? (
                         <>
                           <td><input className={styles.input} type="text" value={editEventData.title} onChange={e => setEditEventData({...editEventData, title: e.target.value})} style={{padding: '5px', width: '100%'}}/></td>
-                          <td><input className={styles.input} type="date" value={new Date(editEventData.date).toISOString().split('T')[0]} onChange={e => setEditEventData({...editEventData, date: e.target.value})} style={{padding: '5px', width: '100%'}}/></td>
+                          <td><input className={styles.input} type="date" value={editEventData.date ? new Date(editEventData.date).toISOString().split('T')[0] : ''} onChange={e => setEditEventData({...editEventData, date: e.target.value})} style={{padding: '5px', width: '100%'}}/></td>
                           <td>-</td>
                           <td>
                             <button onClick={handleSaveEdit} style={{color: '#10b981', marginRight: '10px', background: 'transparent', border: 'none', cursor: 'pointer'}}>💾 Save</button>

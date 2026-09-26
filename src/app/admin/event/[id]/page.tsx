@@ -73,7 +73,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
 
   // VISUALIZATION LOGIC
   // Calculate Average Rating if a RATING question exists
-  const ratingQuestion = eventData.questions.find((q) => q.type === 'RATING');
+  const ratingQuestion = eventData?.questions.find((q) => q.type === 'RATING');
   let avgRating = 0;
   if (ratingQuestion) {
     const ratings = responses.flatMap(r => r.answers.filter((a) => a.questionId === ratingQuestion.id).map((a) => parseInt(a.value)));
@@ -81,7 +81,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
   }
 
   // Calculate Emoji Breakdown if EMOJI question exists
-  const emojiQuestion = eventData.questions.find((q) => q.type === 'EMOJI');
+  const emojiQuestion = eventData?.questions.find((q) => q.type === 'EMOJI');
   const emojiCounts: Record<string, number> = {};
   if (emojiQuestion) {
     responses.forEach(r => {
@@ -210,7 +210,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
                 const questionAnswers = responses.map(res => {
                   const ans = res.answers.find((a) => a.questionId === q.id);
                   return ans ? { user: res.user, value: ans.value, date: res.createdAt } : null;
-                }).filter(Boolean);
+                }).filter(Boolean) as { user: { name: string; email: string; role: string; }; value: string; date: string }[];
 
                 if (questionAnswers.length === 0) return null;
 
