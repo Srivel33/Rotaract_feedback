@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Admin controls who is allowed to use the app
+model AllowedEmail {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// When a user logs in successfully, their session/profile is saved here
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique // Tied to AllowedEmail
+  role      String     // e.g., "President", "Secretary", "Member"
+  responses Response[]
+}
+
+model Event {
+  id        String     @id @default(uuid())
+  title     String
+  location  String
+  date      DateTime
+  isLocked  Boolean    @default(false) // Admin locks/unlocks feedback
+  createdAt DateTime   @default(now())
+  questions Question[]
+  responses Response[]
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  eventId   String
+  text      String
+  type      String   // RATING, EMOJI, CHECKBOX, RADIO, TEXT
+  options   String?  // JSON string for checkbox/radio options
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  answers   Answer[]
+}
+
+model Response {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  createdAt DateTime @default(now())
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  answers   Answer[]
+  
+  // Ensures one feedback per user per event
+  @@unique([eventId, userId]) 
+}
+
+model Answer {
+  id         String   @id @default(uuid())
+  responseId String
+  questionId String
+  value      String   // Stored as string, parsed based on question type
+  response   Response @relation(fields: [responseId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
