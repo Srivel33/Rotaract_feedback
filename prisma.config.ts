@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error
 import { definePrismaConfig } from "prisma/config";
 
 export default definePrismaConfig({
