@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './event.module.css';
 
@@ -17,7 +17,8 @@ const EMOJIS = [
   { id: 'poor', icon: '☹️', label: 'Poor' }
 ];
 
-export default function EventFeedbackPage({ params }: { params: { id: string } }) {
+export default function EventFeedbackPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const [rating, setRating] = useState(0);
   const [emoji, setEmoji] = useState('');
@@ -33,7 +34,7 @@ export default function EventFeedbackPage({ params }: { params: { id: string } }
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       console.log("Submitting Feedback:", {
-        eventId: params.id,
+        eventId: resolvedParams.id,
         rating,
         emoji,
         feedback

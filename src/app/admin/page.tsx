@@ -17,17 +17,23 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      // Mock API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-      console.log("Attempting Admin Login:", { email, password });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      alert("Admin Authentication Successful! Welcome to the Command Center.");
+      router.push('/admin/dashboard');
       
-      // We will replace this with a real backend API call
-      alert("Admin UI Built! Ready to connect to backend authentication.");
-      
-      // router.push('/admin/dashboard');
-    } catch (err) {
-      setError("Invalid credentials.");
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials.");
     } finally {
       setLoading(false);
     }
