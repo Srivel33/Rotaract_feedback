@@ -21,12 +21,9 @@ export default function CreateEventPage() {
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
   
-  const [newQuestions, setNewQuestions] = useState<Question[]>([]);
-  
-
-  useEffect(() => {
-    setNewQuestions([{ id: Date.now(), type: 'RADIO', text: 'Untitled Question', options: ['Option 1'], isRequired: false }]);
-  }, []);
+  const [newQuestions, setNewQuestions] = useState<Question[]>([
+    { id: 1, type: 'RADIO', text: 'Untitled Question', options: ['Option 1'], isRequired: false }
+  ]);
   const [loading, setLoading] = useState(false);
 
   const handleAddQuestion = () => {

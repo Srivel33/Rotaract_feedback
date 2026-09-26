@@ -33,7 +33,7 @@ export default function DashboardPage() {
         setError('An error occurred while fetching events');
         setLoading(false);
       });
-  }, []);
+  }, [router]);
 
   // Filter events based on active tab
   const displayedEvents = events.filter(event => 
