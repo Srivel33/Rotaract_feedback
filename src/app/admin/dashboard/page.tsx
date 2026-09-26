@@ -15,6 +15,7 @@ export default function AdminDashboardPage() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
+  const [newQuestions, setNewQuestions] = useState<{id: number, type: string, text: string}[]>([]);
   
   // Edit State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -71,18 +72,39 @@ export default function AdminDashboardPage() {
 
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (newQuestions.length === 0) {
+      alert("Please add at least one question to your form.");
+      return;
+    }
     try {
       const res = await fetch('/api/admin/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newEventTitle, location: newEventLocation, date: newEventDate })
+        body: JSON.stringify({ 
+          title: newEventTitle, 
+          location: newEventLocation, 
+          date: newEventDate,
+          questions: newQuestions 
+        })
       });
       const data = await res.json();
       if (res.ok) {
         setEvents([data.event, ...events]);
-        setNewEventTitle(''); setNewEventLocation(''); setNewEventDate('');
+        setNewEventTitle(''); setNewEventLocation(''); setNewEventDate(''); setNewQuestions([]);
       } else alert(data.error);
     } catch (err) { alert("Failed to create event"); }
+  };
+
+  const handleAddQuestion = (type: string) => {
+    setNewQuestions([...newQuestions, { id: Date.now(), type, text: '' }]);
+  };
+
+  const handleUpdateQuestion = (id: number, text: string) => {
+    setNewQuestions(newQuestions.map(q => q.id === id ? { ...q, text } : q));
+  };
+
+  const handleRemoveQuestion = (id: number) => {
+    setNewQuestions(newQuestions.filter(q => q.id !== id));
   };
 
   const handleToggleLock = async (event: any) => {
@@ -229,23 +251,55 @@ export default function AdminDashboardPage() {
             
             {/* Create Event Form */}
             <div className={styles.card}>
-              <h3>Create New Event</h3>
-              <form onSubmit={handleCreateEvent} className={styles.formGroup} style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Event Title</label>
-                  <input type="text" className={styles.input} placeholder="Youth Leadership Summit" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} required style={{ width: '100%' }} />
+              <h3>Create New Event & Build Feedback Form</h3>
+              <form onSubmit={handleCreateEvent}>
+                <div className={styles.formGroup} style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                  <div style={{ flex: 1, minWidth: '200px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Event Title</label>
+                    <input type="text" className={styles.input} placeholder="Youth Leadership Summit" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} required style={{ width: '100%' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: '150px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Location</label>
+                    <input type="text" className={styles.input} placeholder="SNSCT Campus" value={newEventLocation} onChange={e => setNewEventLocation(e.target.value)} required style={{ width: '100%' }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: '150px' }}>
+                    <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Date</label>
+                    <input type="date" className={styles.input} value={newEventDate} onChange={e => setNewEventDate(e.target.value)} required style={{ width: '100%', colorScheme: 'dark' }} />
+                  </div>
                 </div>
-                <div style={{ flex: 1, minWidth: '150px' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Location</label>
-                  <input type="text" className={styles.input} placeholder="SNSCT Campus" value={newEventLocation} onChange={e => setNewEventLocation(e.target.value)} required style={{ width: '100%' }} />
+                
+                {/* Form Builder Section */}
+                <div style={{ marginTop: '2rem', padding: '1rem', background: 'rgba(0,0,0,0.3)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <h4 style={{ marginBottom: '1rem', color: 'var(--color-ocean-blue-light)' }}>Form Questions</h4>
+                  
+                  {newQuestions.map((q, index) => (
+                    <div key={q.id} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px' }}>
+                      <div style={{ minWidth: '80px', color: '#888', fontSize: '0.8rem', fontWeight: 'bold' }}>{q.type}</div>
+                      <input 
+                        type="text" 
+                        className={styles.input} 
+                        placeholder="Enter your question here..." 
+                        value={q.text} 
+                        onChange={(e) => handleUpdateQuestion(q.id, e.target.value)} 
+                        style={{ flex: 1 }}
+                        required
+                      />
+                      <button type="button" onClick={() => handleRemoveQuestion(q.id)} style={{ color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer' }}>✕</button>
+                    </div>
+                  ))}
+
+                  {newQuestions.length === 0 && <p style={{ color: '#666', fontSize: '0.9rem', fontStyle: 'italic', marginBottom: '1rem' }}>No questions added yet. Build your form below.</p>}
+
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                    <button type="button" onClick={() => handleAddQuestion('RATING')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#3b82f6', color: '#fff' }}>+ Star Rating</button>
+                    <button type="button" onClick={() => handleAddQuestion('EMOJI')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#eab308', color: '#000' }}>+ Emoji Reaction</button>
+                    <button type="button" onClick={() => handleAddQuestion('TEXT')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#8b5cf6', color: '#fff' }}>+ Long Text</button>
+                  </div>
                 </div>
-                <div style={{ flex: 1, minWidth: '150px' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Date</label>
-                  <input type="date" className={styles.input} value={newEventDate} onChange={e => setNewEventDate(e.target.value)} required style={{ width: '100%', colorScheme: 'dark' }} />
-                </div>
-                <div style={{ alignSelf: 'flex-end', marginBottom: '2px' }}>
-                  <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem', height: '42px' }}>
-                    + Create Event
+
+                <div style={{ marginTop: '1.5rem', textAlign: 'right' }}>
+                  <button type="submit" className="btn-primary" style={{ padding: '12px 30px', fontSize: '1rem' }}>
+                    🚀 Publish Event & Form
                   </button>
                 </div>
               </form>

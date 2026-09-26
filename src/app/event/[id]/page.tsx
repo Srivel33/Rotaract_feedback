@@ -4,32 +4,38 @@ import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './event.module.css';
 
-// Mock event details until backend is hooked up
-const MOCK_EVENT = {
-  title: "Youth Leadership Summit 2024",
-  date: "25 May 2024"
-};
-
 const EMOJIS = [
-  { id: 'excellent', icon: '🤩', label: 'Excellent' },
-  { id: 'good', icon: '🙂', label: 'Good' },
-  { id: 'average', icon: '😐', label: 'Average' },
-  { id: 'poor', icon: '☹️', label: 'Poor' }
+  { id: '🤩', label: 'Excellent' },
+  { id: '🙂', label: 'Good' },
+  { id: '😐', label: 'Average' },
+  { id: '☹️', label: 'Poor' }
 ];
 
 export default function EventFeedbackPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const router = useRouter();
-  const [rating, setRating] = useState(0);
-  const [emoji, setEmoji] = useState('');
-  const [feedback, setFeedback] = useState('');
-  const [eventData, setEventData] = useState<{title: string, date: string} | null>(null);
+  
+  const [eventData, setEventData] = useState<any>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Optionally fetch actual event details here if needed.
-    // For now we will just use a generic title or pass it down.
-    setEventData({ title: "Feedback Form", date: new Date().toLocaleDateString() });
-  }, []);
+    fetch(`/api/event/${resolvedParams.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.event) {
+          setEventData(data.event);
+        } else {
+          setError(data.error || "Event not found");
+        }
+      })
+      .catch(() => setError("Failed to load event data."));
+  }, [resolvedParams.id]);
+
+  const handleAnswerChange = (questionId: string, value: string) => {
+    setAnswers(prev => ({ ...prev, [questionId]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,11 +48,16 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
       return;
     }
 
+    const answersArray = Object.keys(answers).map(qId => ({
+      questionId: qId,
+      value: answers[qId]
+    }));
+
     try {
       const response = await fetch(`/api/event/${resolvedParams.id}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, rating, emoji, feedback })
+        body: JSON.stringify({ email: userEmail, answers: answersArray })
       });
       
       const data = await response.json();
@@ -65,66 +76,75 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  if (error) {
+    return <main className={styles.container}><div style={{ color: 'red', marginTop: '5rem' }}>{error}</div></main>;
+  }
+
+  if (!eventData) {
+    return <main className={styles.container}><div style={{ color: 'white', marginTop: '5rem' }}>Loading Form...</div></main>;
+  }
+
   return (
     <main className={styles.container}>
       <div className={styles.formWrapper}>
         
         <div className={styles.header}>
-          <h1>{eventData?.title || "Loading..."}</h1>
-          <p>{eventData?.date || ""} — Share your voice!</p>
+          <h1>{eventData.title}</h1>
+          <p>{new Date(eventData.date).toLocaleDateString()} — Share your voice!</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           
-          {/* Star Rating Section */}
-          <div className={styles.questionSection}>
-            <label className={styles.questionLabel}>1. How was your overall experience?</label>
-            <div className={styles.starContainer}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span 
-                  key={star}
-                  className={`${styles.star} ${star <= rating ? styles.active : ''}`}
-                  onClick={() => setRating(star)}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-          </div>
+          {eventData.questions.map((q: any, index: number) => (
+            <div key={q.id} className={styles.questionSection}>
+              <label className={styles.questionLabel}>{index + 1}. {q.text}</label>
+              
+              {q.type === 'RATING' && (
+                <div className={styles.starContainer}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span 
+                      key={star}
+                      className={`${styles.star} ${parseInt(answers[q.id] || "0") >= star ? styles.active : ''}`}
+                      onClick={() => handleAnswerChange(q.id, star.toString())}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+              )}
 
-          {/* Emoji Rating Section */}
-          <div className={styles.questionSection}>
-            <label className={styles.questionLabel}>2. How would you rate the organization?</label>
-            <div className={styles.emojiContainer}>
-              {EMOJIS.map((item) => (
-                <button
-                  type="button"
-                  key={item.id}
-                  className={`${styles.emojiOption} ${emoji === item.id ? styles.selected : ''}`}
-                  onClick={() => setEmoji(item.id)}
-                  title={item.label}
-                >
-                  {item.icon}
-                </button>
-              ))}
-            </div>
-          </div>
+              {q.type === 'EMOJI' && (
+                <div className={styles.emojiContainer}>
+                  {EMOJIS.map((item) => (
+                    <button
+                      type="button"
+                      key={item.id}
+                      className={`${styles.emojiOption} ${answers[q.id] === item.id ? styles.selected : ''}`}
+                      onClick={() => handleAnswerChange(q.id, item.id)}
+                      title={item.label}
+                    >
+                      {item.id}
+                    </button>
+                  ))}
+                </div>
+              )}
 
-          {/* Long Text Section */}
-          <div className={styles.questionSection}>
-            <label className={styles.questionLabel}>3. Any highlights or suggestions?</label>
-            <textarea 
-              className={styles.textarea}
-              placeholder="Write your comments here..."
-              value={feedback}
-              onChange={(e) => setFeedback(e.target.value)}
-            />
-          </div>
+              {q.type === 'TEXT' && (
+                <textarea 
+                  className={styles.textarea}
+                  placeholder="Write your comments here..."
+                  value={answers[q.id] || ""}
+                  onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                  required
+                />
+              )}
+            </div>
+          ))}
 
           <button 
             type="submit" 
             className={`btn-primary ${styles.submitBtn}`}
-            disabled={loading || rating === 0 || emoji === ''}
+            disabled={loading || Object.keys(answers).length < eventData.questions.length}
           >
             {loading ? "Submitting..." : "Submit Feedback"}
           </button>

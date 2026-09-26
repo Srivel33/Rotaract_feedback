@@ -15,10 +15,10 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { title, location, date } = await request.json();
+    const { title, location, date, questions } = await request.json();
 
     if (!title || !location || !date) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+      return NextResponse.json({ error: 'Title, location, and date are required' }, { status: 400 });
     }
 
     const newEvent = await prisma.event.create({
@@ -27,11 +27,11 @@ export async function POST(request: Request) {
         location,
         date: new Date(date),
         questions: {
-          create: [
-            { text: "How was your overall experience?", type: "RATING" },
-            { text: "How would you rate the organization?", type: "EMOJI" },
-            { text: "Any highlights or suggestions?", type: "TEXT" }
-          ]
+          create: questions && questions.length > 0 ? questions.map((q: any) => ({
+            text: q.text,
+            type: q.type,
+            options: q.options || null
+          })) : []
         }
       }
     });
