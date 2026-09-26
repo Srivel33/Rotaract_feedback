@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './admin-dashboard.module.css';
 
 type Tab = 'ALLOWLIST' | 'EVENTS' | 'RESPONSES';
@@ -8,11 +8,49 @@ type Tab = 'ALLOWLIST' | 'EVENTS' | 'RESPONSES';
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<Tab>('ALLOWLIST');
   const [newEmail, setNewEmail] = useState('');
+  const [allowedEmails, setAllowedEmails] = useState<{id: string, email: string, createdAt: string}[]>([]);
 
-  const handleAddEmail = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (activeTab === 'ALLOWLIST') {
+      fetch('/api/admin/allowlist')
+        .then(res => res.json())
+        .then(data => {
+          if (data.emails) setAllowedEmails(data.emails);
+        });
+    }
+  }, [activeTab]);
+
+  const handleAddEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Backend not connected yet. Would add: ${newEmail}`);
-    setNewEmail('');
+    try {
+      const res = await fetch('/api/admin/allowlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newEmail })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAllowedEmails([data.newEmail, ...allowedEmails]);
+        setNewEmail('');
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      alert("Failed to add email.");
+    }
+  };
+
+  const handleRemoveEmail = async (email: string) => {
+    try {
+      const res = await fetch(`/api/admin/allowlist?email=${encodeURIComponent(email)}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setAllowedEmails(allowedEmails.filter(e => e.email !== email));
+      }
+    } catch (err) {
+      alert("Failed to remove email.");
+    }
   };
 
   const handleExport = () => {
@@ -88,12 +126,23 @@ export default function AdminDashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Mock Data */}
-                  <tr>
-                    <td>srivel@gmail.com</td>
-                    <td>Sept 26, 2026</td>
-                    <td><button style={{color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer'}}>Remove</button></td>
-                  </tr>
+                  {allowedEmails.map(item => (
+                    <tr key={item.id}>
+                      <td>{item.email}</td>
+                      <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <button 
+                          onClick={() => handleRemoveEmail(item.email)}
+                          style={{color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer'}}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {allowedEmails.length === 0 && (
+                    <tr><td colSpan={3} style={{textAlign: 'center'}}>No authorized emails yet.</td></tr>
+                  )}
                 </tbody>
               </table>
             </div>
