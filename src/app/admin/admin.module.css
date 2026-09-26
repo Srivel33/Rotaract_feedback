@@ -1,0 +1,73 @@
+.adminContainer {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: var(--color-jet-black-light); /* Slightly lighter for Admin */
+  position: relative;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-ocean-blue-light);
+  box-shadow: 0 0 20px rgba(0, 119, 182, 0.3);
+  border-radius: 15px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.header {
+  text-align: center;
+}
+
+.header h1 {
+  color: var(--color-off-white);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.header p {
+  color: var(--color-ocean-blue-light);
+  font-size: 0.9rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px;
+  border-radius: 8px;
+  color: var(--color-off-white);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.input:focus {
+  border-color: var(--color-ocean-blue-light);
+}
+
+.submitBtn {
+  margin-top: 1rem;
+  width: 100%;
+}
