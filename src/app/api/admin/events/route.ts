@@ -5,7 +5,12 @@ export async function GET() {
   try {
     const events = await prisma.event.findMany({
       where: { isArchived: false },
-      orderBy: { date: 'desc' }
+      orderBy: { date: 'desc' },
+      include: {
+        _count: {
+          select: { responses: true }
+        }
+      }
     });
     return NextResponse.json({ events });
   } catch (error) {

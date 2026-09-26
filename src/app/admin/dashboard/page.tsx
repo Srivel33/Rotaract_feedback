@@ -11,13 +11,11 @@ export default function AdminDashboardPage() {
   const [newEmail, setNewEmail] = useState('');
   const [allowedEmails, setAllowedEmails] = useState<{id: string, email: string, createdAt: string}[]>([]);
 
+  // Events State
   const [events, setEvents] = useState<any[]>([]);
   // Edit State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editEventData, setEditEventData] = useState<any>({});
-
-  // Responses State
-  const [responses, setResponses] = useState<any[]>([]);
 
   useEffect(() => {
     if (activeTab === 'ALLOWLIST') {
@@ -26,17 +24,11 @@ export default function AdminDashboardPage() {
         .then(data => {
           if (data.emails) setAllowedEmails(data.emails);
         });
-    } else if (activeTab === 'EVENTS') {
+    } else if (activeTab === 'EVENTS' || activeTab === 'RESPONSES') {
       fetch('/api/admin/events')
         .then(res => res.json())
         .then(data => {
           if (data.events) setEvents(data.events);
-        });
-    } else if (activeTab === 'RESPONSES') {
-      fetch('/api/admin/responses')
-        .then(res => res.json())
-        .then(data => {
-          if (data.responses) setResponses(data.responses);
         });
     }
   }, [activeTab]);
@@ -113,45 +105,7 @@ export default function AdminDashboardPage() {
     } catch (err) { alert("Failed to delete"); }
   };
 
-  const handleExport = () => {
-    if (responses.length === 0) {
-      alert("No responses to export.");
-      return;
-    }
 
-    // Prepare CSV headers
-    const headers = ["Date", "Member Name", "Member Email", "Role", "Event Title", "Event Date", "Question", "Answer"];
-    
-    // Prepare rows
-    const rows: string[] = [];
-    rows.push(headers.join(","));
-
-    responses.forEach(res => {
-      const date = new Date(res.createdAt).toLocaleDateString();
-      const name = `"${res.user.name}"`;
-      const email = `"${res.user.email}"`;
-      const role = `"${res.user.role}"`;
-      const eventTitle = `"${res.event.title}"`;
-      const eventDate = new Date(res.event.date).toLocaleDateString();
-
-      res.answers.forEach((ans: any) => {
-        const questionText = `"${ans.question.text}"`;
-        // Escape quotes inside answers just in case
-        const answerText = `"${ans.value.replace(/"/g, '""')}"`;
-        
-        rows.push([date, name, email, role, eventTitle, eventDate, questionText, answerText].join(","));
-      });
-    });
-
-    const csvContent = "data:text/csv;charset=utf-8," + rows.join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `orca_feedback_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <div className={styles.layout}>
@@ -323,40 +277,54 @@ export default function AdminDashboardPage() {
         {activeTab === 'RESPONSES' && (
           <section>
             <div className={styles.sectionHeader}>
-              <h1>Feedback Responses</h1>
-              <button onClick={handleExport} className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem', background: '#10b981', color: '#fff' }}>
-                📥 Export CSV
-              </button>
+              <h1>Event Analytics & Feedback</h1>
+              <p style={{ color: '#aaa', marginTop: '0.5rem' }}>Select an event to view detailed feedback, visualizations, and export specific CSV data.</p>
             </div>
+            
             <div className={styles.card}>
               <table className={styles.table}>
                 <thead>
                   <tr>
+                    <th>Event Title</th>
                     <th>Date</th>
-                    <th>Member</th>
-                    <th>Event</th>
-                    <th>Feedback Summary</th>
+                    <th>Total Responses</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {responses.map(res => (
-                    <tr key={res.id}>
-                      <td>{new Date(res.createdAt).toLocaleDateString()}</td>
+                  {events.map(event => (
+                    <tr key={event.id}>
+                      <td>{event.title}</td>
+                      <td>{new Date(event.date).toLocaleDateString()}</td>
                       <td>
-                        <div style={{fontWeight: 'bold', color: '#fff'}}>{res.user.name}</div>
-                        <div style={{fontSize: '0.8rem', color: '#aaa'}}>{res.user.role}</div>
+                        <span style={{ 
+                          background: 'rgba(72, 202, 228, 0.1)', 
+                          color: 'var(--color-ocean-blue-light)', 
+                          padding: '4px 12px', 
+                          borderRadius: '20px', 
+                          fontWeight: 'bold' 
+                        }}>
+                          {event._count?.responses || 0}
+                        </span>
                       </td>
-                      <td>{res.event.title}</td>
                       <td>
-                        {res.answers.map((ans: any) => (
-                          <div key={ans.id} style={{fontSize: '0.9rem', marginBottom: '4px'}}>
-                            <strong style={{color: '#888'}}>{ans.question.type}:</strong> {ans.value}
-                          </div>
-                        ))}
+                        <Link href={`/admin/event/${event.id}`}>
+                          <button style={{ 
+                            background: 'var(--color-ocean-blue)', 
+                            color: '#fff', 
+                            border: 'none', 
+                            padding: '8px 16px', 
+                            borderRadius: '8px', 
+                            cursor: 'pointer',
+                            fontWeight: 'bold'
+                          }}>
+                            View Analytics ↗
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
-                  {responses.length === 0 && <tr><td colSpan={4} style={{textAlign: 'center'}}>No feedback received yet.</td></tr>}
+                  {events.length === 0 && <tr><td colSpan={4} style={{textAlign: 'center'}}>No active events found.</td></tr>}
                 </tbody>
               </table>
             </div>
