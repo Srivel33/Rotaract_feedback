@@ -1,0 +1,121 @@
+.container {
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  background-color: var(--color-jet-black);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 600px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.header h1 {
+  color: var(--color-ocean-blue-light);
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: #a0a0a0;
+  font-size: 1rem;
+}
+
+.questionSection {
+  margin-bottom: 2.5rem;
+}
+
+.questionLabel {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-off-white);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+/* Star Rating */
+.starContainer {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.star {
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.2);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.star.active {
+  color: #f59e0b; /* Golden Yellow */
+  transform: scale(1.1);
+}
+
+/* Emoji Rating */
+.emojiContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-around;
+}
+
+.emojiOption {
+  font-size: 2.5rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.emojiOption:hover {
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.emojiOption.selected {
+  opacity: 1;
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px var(--color-ocean-blue-light));
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  color: var(--color-off-white);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.textarea:focus {
+  border-color: var(--color-ocean-blue-light);
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 1rem;
+}
