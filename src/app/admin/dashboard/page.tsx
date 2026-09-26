@@ -15,7 +15,7 @@ export default function AdminDashboardPage() {
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
-  const [newQuestions, setNewQuestions] = useState<{id: number, type: string, text: string}[]>([]);
+  const [newQuestions, setNewQuestions] = useState<{id: number, type: string, text: string, options?: string, isRequired: boolean}[]>([]);
   
   // Edit State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
@@ -105,15 +105,25 @@ export default function AdminDashboardPage() {
   };
 
   const handleAddQuestion = (type: string) => {
-    setNewQuestions([...newQuestions, { id: Date.now(), type, text: '' }]);
+    setNewQuestions([...newQuestions, { id: Date.now(), type, text: '', options: '', isRequired: true }]);
   };
 
-  const handleUpdateQuestion = (id: number, text: string) => {
-    setNewQuestions(newQuestions.map(q => q.id === id ? { ...q, text } : q));
+  const handleUpdateQuestion = (id: number, field: string, value: any) => {
+    setNewQuestions(newQuestions.map(q => q.id === id ? { ...q, [field]: value } : q));
   };
 
   const handleRemoveQuestion = (id: number) => {
     setNewQuestions(newQuestions.filter(q => q.id !== id));
+  };
+
+  const handleMoveQuestion = (index: number, direction: 'up' | 'down') => {
+    const newQs = [...newQuestions];
+    if (direction === 'up' && index > 0) {
+      [newQs[index - 1], newQs[index]] = [newQs[index], newQs[index - 1]];
+    } else if (direction === 'down' && index < newQs.length - 1) {
+      [newQs[index + 1], newQs[index]] = [newQs[index], newQs[index + 1]];
+    }
+    setNewQuestions(newQs);
   };
 
   const handleToggleLock = async (event: any) => {
@@ -318,27 +328,51 @@ export default function AdminDashboardPage() {
                   <h4 style={{ marginBottom: '1rem', color: 'var(--color-ocean-blue-light)' }}>Form Questions</h4>
                   
                   {newQuestions.map((q, index) => (
-                    <div key={q.id} style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '8px' }}>
-                      <div style={{ minWidth: '80px', color: '#888', fontSize: '0.8rem', fontWeight: 'bold' }}>{q.type}</div>
-                      <input 
-                        type="text" 
-                        className={styles.input} 
-                        placeholder="Enter your question here..." 
-                        value={q.text} 
-                        onChange={(e) => handleUpdateQuestion(q.id, e.target.value)} 
-                        style={{ flex: 1 }}
-                        required
-                      />
-                      <button type="button" onClick={() => handleRemoveQuestion(q.id)} style={{ color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer' }}>✕</button>
+                    <div key={q.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '8px', borderLeft: '3px solid var(--color-ocean-blue-light)' }}>
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <div style={{ minWidth: '80px', color: '#888', fontSize: '0.8rem', fontWeight: 'bold' }}>{q.type}</div>
+                        <input 
+                          type="text" 
+                          className={styles.input} 
+                          placeholder="Enter your question here..." 
+                          value={q.text} 
+                          onChange={(e) => handleUpdateQuestion(q.id, 'text', e.target.value)} 
+                          style={{ flex: 1 }}
+                          required
+                        />
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', color: '#aaa', cursor: 'pointer' }}>
+                          <input type="checkbox" checked={q.isRequired} onChange={(e) => handleUpdateQuestion(q.id, 'isRequired', e.target.checked)} /> Required
+                        </label>
+                        <button type="button" onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} style={{ background: 'transparent', border: 'none', color: index === 0 ? '#444' : '#fff', cursor: 'pointer' }}>⬆️</button>
+                        <button type="button" onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} style={{ background: 'transparent', border: 'none', color: index === newQuestions.length - 1 ? '#444' : '#fff', cursor: 'pointer' }}>⬇️</button>
+                        <button type="button" onClick={() => handleRemoveQuestion(q.id)} style={{ color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer', marginLeft: '5px' }}>✕</button>
+                      </div>
+                      
+                      {['RADIO', 'CHECKBOX', 'DROPDOWN'].includes(q.type) && (
+                        <div style={{ paddingLeft: '96px' }}>
+                          <input 
+                            type="text" 
+                            className={styles.input} 
+                            placeholder="Comma-separated options (e.g. Yes, No, Maybe)" 
+                            value={q.options || ''} 
+                            onChange={(e) => handleUpdateQuestion(q.id, 'options', e.target.value)} 
+                            style={{ width: '100%', fontSize: '0.9rem', borderColor: 'rgba(255,255,255,0.1)' }}
+                            required
+                          />
+                        </div>
+                      )}
                     </div>
                   ))}
 
                   {newQuestions.length === 0 && <p style={{ color: '#666', fontSize: '0.9rem', fontStyle: 'italic', marginBottom: '1rem' }}>No questions added yet. Build your form below.</p>}
 
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
                     <button type="button" onClick={() => handleAddQuestion('RATING')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#3b82f6', color: '#fff' }}>+ Star Rating</button>
                     <button type="button" onClick={() => handleAddQuestion('EMOJI')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#eab308', color: '#000' }}>+ Emoji Reaction</button>
                     <button type="button" onClick={() => handleAddQuestion('TEXT')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#8b5cf6', color: '#fff' }}>+ Long Text</button>
+                    <button type="button" onClick={() => handleAddQuestion('RADIO')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#ec4899', color: '#fff' }}>+ Multiple Choice</button>
+                    <button type="button" onClick={() => handleAddQuestion('CHECKBOX')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#10b981', color: '#fff' }}>+ Checkboxes</button>
+                    <button type="button" onClick={() => handleAddQuestion('DROPDOWN')} className="btn-primary" style={{ padding: '5px 15px', fontSize: '0.8rem', background: '#6366f1', color: '#fff' }}>+ Dropdown</button>
                   </div>
                 </div>
 

@@ -37,6 +37,17 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   };
 
+  const handleCheckboxChange = (questionId: string, value: string, checked: boolean) => {
+    setAnswers(prev => {
+      const current = prev[questionId] ? prev[questionId].split(',') : [];
+      if (checked) {
+        return { ...prev, [questionId]: [...current, value].join(',') };
+      } else {
+        return { ...prev, [questionId]: current.filter(v => v !== value).join(',') };
+      }
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -97,7 +108,9 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
           
           {eventData.questions.map((q: any, index: number) => (
             <div key={q.id} className={styles.questionSection}>
-              <label className={styles.questionLabel}>{index + 1}. {q.text}</label>
+              <label className={styles.questionLabel}>
+                {index + 1}. {q.text} {q.isRequired && <span style={{color: '#ff4d4f'}}>*</span>}
+              </label>
               
               {q.type === 'RATING' && (
                 <div className={styles.starContainer}>
@@ -129,13 +142,64 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
                 </div>
               )}
 
+              {q.type === 'RADIO' && q.options && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
+                  {JSON.parse(q.options).map((opt: string, i: number) => (
+                    <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ccc', cursor: 'pointer', fontSize: '1rem' }}>
+                      <input 
+                        type="radio" 
+                        name={`q_${q.id}`} 
+                        value={opt} 
+                        checked={answers[q.id] === opt}
+                        onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                        style={{ width: '18px', height: '18px', accentColor: 'var(--color-ocean-blue-light)' }}
+                      />
+                      {opt}
+                    </label>
+                  ))}
+                </div>
+              )}
+
+              {q.type === 'CHECKBOX' && q.options && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
+                  {JSON.parse(q.options).map((opt: string, i: number) => {
+                    const isChecked = (answers[q.id] || '').split(',').includes(opt);
+                    return (
+                      <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ccc', cursor: 'pointer', fontSize: '1rem' }}>
+                        <input 
+                          type="checkbox" 
+                          value={opt} 
+                          checked={isChecked}
+                          onChange={(e) => handleCheckboxChange(q.id, e.target.value, e.target.checked)}
+                          style={{ width: '18px', height: '18px', accentColor: 'var(--color-ocean-blue-light)' }}
+                        />
+                        {opt}
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+
+              {q.type === 'DROPDOWN' && q.options && (
+                <select 
+                  className={styles.input} 
+                  value={answers[q.id] || ''} 
+                  onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                  style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.5)', color: '#fff', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)' }}
+                >
+                  <option value="" disabled>Select an option</option>
+                  {JSON.parse(q.options).map((opt: string, i: number) => (
+                    <option key={i} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              )}
+
               {q.type === 'TEXT' && (
                 <textarea 
                   className={styles.textarea}
                   placeholder="Write your comments here..."
                   value={answers[q.id] || ""}
                   onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                  required
                 />
               )}
             </div>
@@ -144,7 +208,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
           <button 
             type="submit" 
             className={`btn-primary ${styles.submitBtn}`}
-            disabled={loading || Object.keys(answers).length < eventData.questions.length}
+            disabled={loading || eventData.questions.some((q: any) => q.isRequired && (!answers[q.id] || answers[q.id] === ''))}
           >
             {loading ? "Submitting..." : "Submit Feedback"}
           </button>

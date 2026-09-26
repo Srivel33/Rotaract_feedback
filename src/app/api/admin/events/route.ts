@@ -27,11 +27,21 @@ export async function POST(request: Request) {
         location,
         date: new Date(date),
         questions: {
-          create: questions && questions.length > 0 ? questions.map((q: any) => ({
-            text: q.text,
-            type: q.type,
-            options: q.options || null
-          })) : []
+          create: questions && questions.length > 0 ? questions.map((q: any) => {
+            // Convert comma-separated options to JSON string
+            let parsedOptions = null;
+            if (q.options && q.options.trim() !== '') {
+              const optsArray = q.options.split(',').map((o: string) => o.trim()).filter((o:string) => o);
+              parsedOptions = JSON.stringify(optsArray);
+            }
+            
+            return {
+              text: q.text,
+              type: q.type,
+              options: parsedOptions,
+              isRequired: q.isRequired !== undefined ? q.isRequired : true
+            };
+          }) : []
         }
       }
     });

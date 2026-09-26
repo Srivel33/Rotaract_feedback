@@ -39,8 +39,9 @@ model Question {
   id        String   @id @default(uuid())
   eventId   String
   text      String
-  type      String   // RATING, EMOJI, CHECKBOX, RADIO, TEXT
+  type      String   // RATING, EMOJI, CHECKBOX, RADIO, TEXT, DROPDOWN
   options   String?  // JSON string for checkbox/radio options
+  isRequired Boolean @default(true)
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   answers   Answer[]
 }
