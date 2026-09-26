@@ -206,7 +206,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
             </div>
           ) : (
             <div className={styles.feedList}>
-              {eventData.questions.map((q) => {
+              {eventData?.questions.map((q) => {
                 const questionAnswers = responses.map(res => {
                   const ans = res.answers.find((a) => a.questionId === q.id);
                   return ans ? { user: res.user, value: ans.value, date: res.createdAt } : null;
