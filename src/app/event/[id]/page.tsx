@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from 'react';
+import { useState, use, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './event.module.css';
 
@@ -23,28 +23,43 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
   const [rating, setRating] = useState(0);
   const [emoji, setEmoji] = useState('');
   const [feedback, setFeedback] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [eventData, setEventData] = useState<{title: string, date: string} | null>(null);
+
+  useEffect(() => {
+    // Optionally fetch actual event details here if needed.
+    // For now we will just use a generic title or pass it down.
+    setEventData({ title: "Feedback Form", date: new Date().toLocaleDateString() });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail) {
+      alert("Please log in first!");
+      router.push('/auth');
+      return;
+    }
+
     try {
-      // Mock API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log("Submitting Feedback:", {
-        eventId: resolvedParams.id,
-        rating,
-        emoji,
-        feedback
+      const response = await fetch(`/api/event/${resolvedParams.id}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, rating, emoji, feedback })
       });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit feedback');
+      }
 
       alert("Feedback submitted successfully! Thank you.");
       router.push('/dashboard');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error submitting feedback.");
+      alert(err.message || "Error submitting feedback.");
     } finally {
       setLoading(false);
     }
@@ -55,8 +70,8 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
       <div className={styles.formWrapper}>
         
         <div className={styles.header}>
-          <h1>{MOCK_EVENT.title}</h1>
-          <p>{MOCK_EVENT.date} — Share your voice!</p>
+          <h1>{eventData?.title || "Loading..."}</h1>
+          <p>{eventData?.date || ""} — Share your voice!</p>
         </div>
 
         <form onSubmit={handleSubmit}>

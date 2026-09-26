@@ -34,6 +34,7 @@ export default function AuthPage() {
 
       // Success! In a real app we'd redirect to dashboard here.
       alert(`Success! Welcome ${data.user.name}. You are now allowed into the dashboard.`);
+      localStorage.setItem('userEmail', data.user.email);
       router.push('/dashboard');
       
     } catch (err: any) {

@@ -115,7 +115,7 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteEvent = async (id: string) => {
-    if (!confirm("Delete this event? (History is preserved)")) return;
+    if (!confirm("Delete this event completely? This action cannot be undone and will delete all associated feedback.")) return;
     try {
       const res = await fetch(`/api/admin/events?id=${id}`, { method: 'DELETE' });
       if (res.ok) {
@@ -230,13 +230,24 @@ export default function AdminDashboardPage() {
             {/* Create Event Form */}
             <div className={styles.card}>
               <h3>Create New Event</h3>
-              <form onSubmit={handleCreateEvent} className={styles.formGroup} style={{ flexWrap: 'wrap' }}>
-                <input type="text" className={styles.input} placeholder="Event Title" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} required />
-                <input type="text" className={styles.input} placeholder="Location" value={newEventLocation} onChange={e => setNewEventLocation(e.target.value)} required />
-                <input type="date" className={styles.input} value={newEventDate} onChange={e => setNewEventDate(e.target.value)} required />
-                <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem' }}>
-                  + Create Event
-                </button>
+              <form onSubmit={handleCreateEvent} className={styles.formGroup} style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Event Title</label>
+                  <input type="text" className={styles.input} placeholder="Youth Leadership Summit" value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} required style={{ width: '100%' }} />
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Location</label>
+                  <input type="text" className={styles.input} placeholder="SNSCT Campus" value={newEventLocation} onChange={e => setNewEventLocation(e.target.value)} required style={{ width: '100%' }} />
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', color: '#aaa', marginBottom: '5px' }}>Date</label>
+                  <input type="date" className={styles.input} value={newEventDate} onChange={e => setNewEventDate(e.target.value)} required style={{ width: '100%', colorScheme: 'dark' }} />
+                </div>
+                <div style={{ alignSelf: 'flex-end', marginBottom: '2px' }}>
+                  <button type="submit" className="btn-primary" style={{ padding: '10px 20px', fontSize: '0.9rem', height: '42px' }}>
+                    + Create Event
+                  </button>
+                </div>
               </form>
             </div>
 

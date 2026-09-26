@@ -25,7 +25,14 @@ export async function POST(request: Request) {
       data: {
         title,
         location,
-        date: new Date(date)
+        date: new Date(date),
+        questions: {
+          create: [
+            { text: "How was your overall experience?", type: "RATING" },
+            { text: "How would you rate the organization?", type: "EMOJI" },
+            { text: "Any highlights or suggestions?", type: "TEXT" }
+          ]
+        }
       }
     });
 
@@ -69,13 +76,12 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Event ID is required' }, { status: 400 });
     }
 
-    // Soft delete to keep history
-    await prisma.event.update({
-      where: { id },
-      data: { isArchived: true }
+    // Hard delete the event as requested by user
+    await prisma.event.delete({
+      where: { id }
     });
 
-    return NextResponse.json({ message: 'Event deleted (archived) successfully' });
+    return NextResponse.json({ message: 'Event permanently deleted' });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
   }
