@@ -68,15 +68,15 @@ export default function CreateEventPage() {
     }
   };
 
-  const getBadgeColor = (type: string) => {
+  const getBadgeIcon = (type: string) => {
     switch (type) {
-      case 'RATING': return { bg: '#3b82f6', color: '#fff' };
-      case 'EMOJI': return { bg: '#eab308', color: '#000' };
-      case 'TEXT': return { bg: '#8b5cf6', color: '#fff' };
-      case 'RADIO': return { bg: '#ec4899', color: '#fff' };
-      case 'CHECKBOX': return { bg: '#10b981', color: '#fff' };
-      case 'DROPDOWN': return { bg: '#6366f1', color: '#fff' };
-      default: return { bg: '#555', color: '#fff' };
+      case 'RATING': return '★ RATING';
+      case 'EMOJI': return '😀 EMOJI';
+      case 'TEXT': return '📝 TEXT';
+      case 'RADIO': return '🔘 RADIO';
+      case 'CHECKBOX': return '☑️ CHECKBOX';
+      case 'DROPDOWN': return '▼ DROPDOWN';
+      default: return type;
     }
   };
 
@@ -109,69 +109,68 @@ export default function CreateEventPage() {
 
           <div className={styles.questionsHeader}>
             <h2>Form Questions</h2>
-            <span style={{color: '#888', fontSize: '0.9rem'}}>{newQuestions.length} Questions Added</span>
           </div>
 
           {newQuestions.map((q, index) => {
-            const badgeStyle = getBadgeColor(q.type);
             return (
               <div key={q.id} className={styles.questionItem}>
-                <div className={styles.questionRow}>
-                  <div className={styles.typeBadge} style={{ background: badgeStyle.bg, color: badgeStyle.color }}>
-                    {q.type}
-                  </div>
-                  
-                  <input 
-                    type="text" 
-                    className={styles.input} 
-                    placeholder="Enter your question prompt here..." 
-                    value={q.text} 
-                    onChange={(e) => handleUpdateQuestion(q.id, 'text', e.target.value)} 
-                    style={{ flex: 1 }}
-                    required
-                  />
-
-                  <div className={styles.questionTools}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.85rem', color: '#ccc', cursor: 'pointer', marginRight: '10px' }}>
-                      <input type="checkbox" checked={q.isRequired} onChange={(e) => handleUpdateQuestion(q.id, 'isRequired', e.target.checked)} style={{accentColor: 'var(--color-ocean-blue-light)'}}/> Required
-                    </label>
-                    
-                    <button type="button" className={styles.iconBtn} onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} style={{ color: index === 0 ? '#444' : '#fff' }}>⬆️</button>
-                    <button type="button" className={styles.iconBtn} onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} style={{ color: index === newQuestions.length - 1 ? '#444' : '#fff' }}>⬇️</button>
-                    <button type="button" className={styles.iconBtn} onClick={() => handleRemoveQuestion(q.id)} style={{ color: '#ff4d4f', marginLeft: '5px' }}>✕</button>
+                <div className={styles.questionHeader}>
+                  <div className={styles.typeBadge}>
+                    {getBadgeIcon(q.type)}
                   </div>
                 </div>
+                
+                <input 
+                  type="text" 
+                  className={styles.questionInput} 
+                  placeholder="Question text..." 
+                  value={q.text} 
+                  onChange={(e) => handleUpdateQuestion(q.id, 'text', e.target.value)} 
+                  required
+                />
 
                 {['RADIO', 'CHECKBOX', 'DROPDOWN'].includes(q.type) && (
-                  <div style={{ paddingLeft: '116px', marginTop: '10px' }}>
+                  <div>
                     <input 
                       type="text" 
-                      className={styles.input} 
-                      placeholder="Comma-separated options (e.g. Yes, No, Maybe)" 
+                      className={styles.optionsInput} 
+                      placeholder="Enter options separated by commas (e.g. Yes, No, Maybe)" 
                       value={q.options || ''} 
                       onChange={(e) => handleUpdateQuestion(q.id, 'options', e.target.value)} 
-                      style={{ width: '100%', fontSize: '0.9rem', background: 'rgba(0,0,0,0.2)' }}
                       required
                     />
                   </div>
                 )}
+
+                <div className={styles.questionFooter}>
+                  <label className={styles.requiredToggle}>
+                    <input 
+                      type="checkbox" 
+                      checked={q.isRequired} 
+                      onChange={(e) => handleUpdateQuestion(q.id, 'isRequired', e.target.checked)} 
+                      style={{ width: '16px', height: '16px', accentColor: 'var(--color-ocean-blue-light)' }}
+                    /> 
+                    Required
+                  </label>
+                  
+                  <button type="button" className={styles.toolbarBtn} onClick={() => handleMoveQuestion(index, 'up')} disabled={index === 0} title="Move Up">⬆️</button>
+                  <button type="button" className={styles.toolbarBtn} onClick={() => handleMoveQuestion(index, 'down')} disabled={index === newQuestions.length - 1} title="Move Down">⬇️</button>
+                  <button type="button" className={`${styles.toolbarBtn} ${styles.deleteBtn}`} onClick={() => handleRemoveQuestion(q.id)} title="Delete Question">🗑️</button>
+                </div>
               </div>
             );
           })}
 
-          {newQuestions.length === 0 && (
-            <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic', margin: '2rem 0' }}>
-              No questions added yet. Start building your custom form below.
-            </p>
-          )}
-
-          <div className={styles.addButtons}>
-            <button type="button" onClick={() => handleAddQuestion('RATING')} className={styles.addBtn} style={{ background: '#3b82f6', color: '#fff' }}>+ Star Rating</button>
-            <button type="button" onClick={() => handleAddQuestion('EMOJI')} className={styles.addBtn} style={{ background: '#eab308', color: '#000' }}>+ Emoji Reaction</button>
-            <button type="button" onClick={() => handleAddQuestion('TEXT')} className={styles.addBtn} style={{ background: '#8b5cf6', color: '#fff' }}>+ Long Text</button>
-            <button type="button" onClick={() => handleAddQuestion('RADIO')} className={styles.addBtn} style={{ background: '#ec4899', color: '#fff' }}>+ Multiple Choice</button>
-            <button type="button" onClick={() => handleAddQuestion('CHECKBOX')} className={styles.addBtn} style={{ background: '#10b981', color: '#fff' }}>+ Checkboxes</button>
-            <button type="button" onClick={() => handleAddQuestion('DROPDOWN')} className={styles.addBtn} style={{ background: '#6366f1', color: '#fff' }}>+ Dropdown</button>
+          <div className={styles.addMenu}>
+            <div className={styles.addMenuTitle}>+ Add new element</div>
+            <div className={styles.addGrid}>
+              <button type="button" onClick={() => handleAddQuestion('RATING')} className={styles.addIconBtn}>★ Star Rating</button>
+              <button type="button" onClick={() => handleAddQuestion('EMOJI')} className={styles.addIconBtn}>😀 Emoji Reaction</button>
+              <button type="button" onClick={() => handleAddQuestion('TEXT')} className={styles.addIconBtn}>📝 Long Text</button>
+              <button type="button" onClick={() => handleAddQuestion('RADIO')} className={styles.addIconBtn}>🔘 Multiple Choice</button>
+              <button type="button" onClick={() => handleAddQuestion('CHECKBOX')} className={styles.addIconBtn}>☑️ Checkboxes</button>
+              <button type="button" onClick={() => handleAddQuestion('DROPDOWN')} className={styles.addIconBtn}>▼ Dropdown</button>
+            </div>
           </div>
 
           <div className={styles.submitSection}>
