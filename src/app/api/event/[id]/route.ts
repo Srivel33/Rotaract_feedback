@@ -19,7 +19,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     }
 
     return NextResponse.json({ event });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch event data' }, { status: 500 });
   }
 }

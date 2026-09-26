@@ -2,18 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './dashboard.module.css';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'PENDING' | 'COMPLETED'>('PENDING');
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<{id: string; title: string; location: string; date: string; isCompleted: boolean}[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const userEmail = localStorage.getItem('userEmail');
     if (!userEmail) {
-      window.location.href = '/auth';
+      router.push('/auth');
       return;
     }
 
@@ -27,7 +29,7 @@ export default function DashboardPage() {
         }
         setLoading(false);
       })
-      .catch(err => {
+      .catch(() => {
         setError('An error occurred while fetching events');
         setLoading(false);
       });
@@ -40,6 +42,10 @@ export default function DashboardPage() {
 
   if (loading) {
     return <main className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}><h2>Loading...</h2></main>;
+  }
+
+  if (error) {
+    return <main className={styles.container} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}><h2>{error}</h2></main>;
   }
 
   return (

@@ -23,7 +23,7 @@ export default function LandingPage() {
 
         <div className={styles.actions}>
           <Link href="/auth" className="btn-primary">
-            Let's Begin
+            Let&apos;s Begin
           </Link>
         </div>
       </div>

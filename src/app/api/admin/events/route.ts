@@ -13,7 +13,7 @@ export async function GET() {
       }
     });
     return NextResponse.json({ events });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 });
   }
 }
@@ -32,10 +32,10 @@ export async function POST(request: Request) {
         location,
         date: new Date(date),
         questions: {
-          create: questions && questions.length > 0 ? questions.map((q: any) => {
+          create: questions && questions.length > 0 ? questions.map((q: { text: string; type: string; options: string | string[]; isRequired?: boolean }) => {
             let parsedOptions = null;
             if (Array.isArray(q.options)) {
-              parsedOptions = JSON.stringify(q.options.filter(o => o.trim() !== ''));
+              parsedOptions = JSON.stringify(q.options.filter((o: string) => o.trim() !== ''));
             } else if (typeof q.options === 'string' && q.options.trim() !== '') {
               const optsArray = q.options.split(',').map((o: string) => o.trim()).filter((o:string) => o);
               parsedOptions = JSON.stringify(optsArray);
@@ -53,9 +53,9 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ message: 'Event created successfully', event: newEvent });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating event:', error);
-    return NextResponse.json({ error: error.message || 'Failed to create event' }, { status: 500 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : 'Failed to create event' }, { status: 500 });
   }
 }
 
@@ -79,7 +79,7 @@ export async function PATCH(request: Request) {
     });
 
     return NextResponse.json({ message: 'Event updated', event: updatedEvent });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to update event' }, { status: 500 });
   }
 }
@@ -99,7 +99,7 @@ export async function DELETE(request: Request) {
     });
 
     return NextResponse.json({ message: 'Event permanently deleted' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to delete event' }, { status: 500 });
   }
 }

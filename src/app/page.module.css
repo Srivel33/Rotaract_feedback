@@ -58,6 +58,7 @@
   margin-bottom: 1rem;
   background: linear-gradient(to right, var(--color-off-white), var(--color-ocean-blue-light));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

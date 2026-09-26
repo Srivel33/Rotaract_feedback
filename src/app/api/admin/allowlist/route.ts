@@ -7,7 +7,7 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json({ emails });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to fetch allowlist' }, { status: 500 });
   }
 }
@@ -25,8 +25,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ message: 'Email added to allowlist', newEmail });
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error) {
+    if (typeof error === 'object' && error !== null && 'code' in error && (error as {code: string}).code === 'P2002') {
       return NextResponse.json({ error: 'Email is already in the allowlist' }, { status: 400 });
     }
     return NextResponse.json({ error: 'Failed to add email' }, { status: 500 });
@@ -47,7 +47,7 @@ export async function DELETE(request: Request) {
     });
 
     return NextResponse.json({ message: 'Email removed successfully' });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Failed to remove email' }, { status: 500 });
   }
 }

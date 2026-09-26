@@ -8,7 +8,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
   const resolvedParams = use(params);
   const router = useRouter();
   
-  const [eventData, setEventData] = useState<any>(null);
+  const [eventData, setEventData] = useState<{ title: string; date: string; questions: { id: string; text: string; type: string; options?: string; isRequired: boolean; }[] } | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -72,9 +72,9 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
 
       alert("Feedback submitted successfully! Thank you.");
       router.push('/dashboard');
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.message || "Error submitting feedback.");
+      alert(err instanceof Error ? err.message : "Error submitting feedback.");
     } finally {
       setLoading(false);
     }
@@ -99,7 +99,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
 
         <form onSubmit={handleSubmit}>
           
-          {eventData.questions.map((q: any, index: number) => (
+          {eventData.questions.map((q: { id: string; text: string; type: string; options?: string; isRequired: boolean; }, index: number) => (
             <div key={q.id} className={styles.questionSection}>
               <label className={styles.questionLabel}>
                 {index + 1}. {q.text} {q.isRequired && <span style={{color: '#ff4d4f'}}>*</span>}
@@ -204,7 +204,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
           <button 
             type="submit" 
             className={`btn-primary ${styles.submitBtn}`}
-            disabled={loading || eventData.questions.some((q: any) => q.isRequired && (!answers[q.id] || answers[q.id] === ''))}
+            disabled={loading || eventData.questions.some((q: { id: string; isRequired: boolean }) => q.isRequired && (!answers[q.id] || answers[q.id] === ''))}
           >
             {loading ? "Submitting..." : "Submit Feedback"}
           </button>

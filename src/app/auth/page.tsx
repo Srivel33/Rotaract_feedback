@@ -37,8 +37,8 @@ export default function AuthPage() {
       localStorage.setItem('userEmail', data.user.email);
       router.push('/dashboard');
       
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function AuthPage() {
     <main className={styles.authContainer}>
       <div className={`glass-card ${styles.formCard}`}>
         <div className={styles.header}>
-          <h1>Who's making waves?</h1>
+          <h1>Who&apos;s making waves?</h1>
           <p>Enter your details to access the ORCA dashboard.</p>
         </div>
 

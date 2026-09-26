@@ -46,7 +46,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         eventId,
         userId: user.id,
         answers: {
-          create: answers.map((a: any) => ({
+          create: answers.map((a: { questionId: string; value: string }) => ({
             questionId: a.questionId,
             value: a.value
           }))

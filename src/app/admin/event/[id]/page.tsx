@@ -1,16 +1,26 @@
 "use client";
 
 import { useState, useEffect, use } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
 import styles from './event-details.module.css';
 
+interface EventData {
+  id: string; title: string; location: string; date: string;
+  questions: {id: string; type: string; text: string}[];
+}
+
+interface ResponseData {
+  id: string; createdAt: string;
+  user: { name: string; email: string; role: string; };
+  answers: { id: string; questionId: string; value: string; question: {text: string; type: string} }[];
+}
+
 export default function AdminEventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
-  const router = useRouter();
   
-  const [eventData, setEventData] = useState<any>(null);
-  const [responses, setResponses] = useState<any[]>([]);
+  const [eventData, setEventData] = useState<EventData | null>(null);
+  const [responses, setResponses] = useState<ResponseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'respondent' | 'question'>('respondent');
 
@@ -41,7 +51,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
       const email = `"${res.user.email}"`;
       const role = `"${res.user.role}"`;
 
-      res.answers.forEach((ans: any) => {
+      res.answers.forEach((ans) => {
         const questionText = `"${ans.question.text}"`;
         const answerText = `"${ans.value.replace(/"/g, '""')}"`;
         rows.push([date, name, email, role, questionText, answerText].join(","));
@@ -63,19 +73,19 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
 
   // VISUALIZATION LOGIC
   // Calculate Average Rating if a RATING question exists
-  const ratingQuestion = eventData.questions.find((q: any) => q.type === 'RATING');
+  const ratingQuestion = eventData.questions.find((q) => q.type === 'RATING');
   let avgRating = 0;
   if (ratingQuestion) {
-    const ratings = responses.flatMap(r => r.answers.filter((a: any) => a.questionId === ratingQuestion.id).map((a: any) => parseInt(a.value)));
+    const ratings = responses.flatMap(r => r.answers.filter((a) => a.questionId === ratingQuestion.id).map((a) => parseInt(a.value)));
     if (ratings.length > 0) avgRating = ratings.reduce((a, b) => a + b, 0) / ratings.length;
   }
 
   // Calculate Emoji Breakdown if EMOJI question exists
-  const emojiQuestion = eventData.questions.find((q: any) => q.type === 'EMOJI');
+  const emojiQuestion = eventData.questions.find((q) => q.type === 'EMOJI');
   const emojiCounts: Record<string, number> = {};
   if (emojiQuestion) {
     responses.forEach(r => {
-      const ans = r.answers.find((a: any) => a.questionId === emojiQuestion.id);
+      const ans = r.answers.find((a) => a.questionId === emojiQuestion.id);
       if (ans) emojiCounts[ans.value] = (emojiCounts[ans.value] || 0) + 1;
     });
   }
@@ -170,7 +180,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
             <p style={{ color: '#aaa', fontStyle: 'italic', marginTop: '1rem' }}>No feedback submitted yet.</p>
           ) : viewMode === 'respondent' ? (
             <div className={styles.feedList}>
-              {responses.map((res: any) => (
+              {responses.map((res) => (
                 <div key={res.id} className={styles.feedItem}>
                   <div className={styles.feedHeader}>
                     <div>
@@ -182,7 +192,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
                   </div>
                   
                   <div className={styles.feedAnswers}>
-                    {res.answers.map((ans: any) => (
+                    {res.answers.map((ans) => (
                       <div key={ans.id} className={styles.answerBlock}>
                         <div className={styles.answerQuestion}>{ans.question.text}</div>
                         <div className={styles.answerValue}>
@@ -196,9 +206,9 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
             </div>
           ) : (
             <div className={styles.feedList}>
-              {eventData.questions.map((q: any) => {
+              {eventData.questions.map((q) => {
                 const questionAnswers = responses.map(res => {
-                  const ans = res.answers.find((a: any) => a.questionId === q.id);
+                  const ans = res.answers.find((a) => a.questionId === q.id);
                   return ans ? { user: res.user, value: ans.value, date: res.createdAt } : null;
                 }).filter(Boolean);
 
@@ -208,7 +218,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
                   <div key={q.id} className={styles.feedItem} style={{ borderLeft: '4px solid var(--color-ocean-blue-light)' }}>
                     <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>{q.text}</h4>
                     <div className={styles.feedAnswers}>
-                      {questionAnswers.map((qa: any, idx: number) => (
+                      {questionAnswers.map((qa: {user: {name: string}, value: string, date: string}, idx: number) => (
                         <div key={idx} className={styles.answerBlock} style={{ borderLeft: 'none', background: 'rgba(255,255,255,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
                             <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{qa.user.name}</span>

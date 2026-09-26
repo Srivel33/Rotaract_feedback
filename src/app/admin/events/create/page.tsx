@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './create-event.module.css';
 import Link from 'next/link';
@@ -21,16 +21,19 @@ export default function CreateEventPage() {
   const [newEventLocation, setNewEventLocation] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
   
-  const [newQuestions, setNewQuestions] = useState<Question[]>([
-    { id: Date.now(), type: 'RADIO', text: 'Untitled Question', options: ['Option 1'], isRequired: false }
-  ]);
+  const [newQuestions, setNewQuestions] = useState<Question[]>([]);
+  
+
+  useEffect(() => {
+    setNewQuestions([{ id: Date.now(), type: 'RADIO', text: 'Untitled Question', options: ['Option 1'], isRequired: false }]);
+  }, []);
   const [loading, setLoading] = useState(false);
 
   const handleAddQuestion = () => {
     setNewQuestions([...newQuestions, { id: Date.now(), type: 'RADIO', text: '', options: ['Option 1'], isRequired: false }]);
   };
 
-  const handleUpdateQuestion = (id: number, field: keyof Question, value: any) => {
+  const handleUpdateQuestion = (id: number, field: keyof Question, value: string | boolean) => {
     setNewQuestions(newQuestions.map(q => {
       if (q.id === id) {
         const updated = { ...q, [field]: value };
@@ -120,7 +123,7 @@ export default function CreateEventPage() {
         alert(data.error);
         setLoading(false);
       }
-    } catch (err) { 
+    } catch { 
       alert("Failed to create event");
       setLoading(false);
     }

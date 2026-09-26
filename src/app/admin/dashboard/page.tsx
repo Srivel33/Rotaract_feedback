@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './admin-dashboard.module.css';
 
 type Tab = 'ALLOWLIST' | 'EVENTS' | 'RESPONSES';
@@ -11,11 +12,13 @@ export default function AdminDashboardPage() {
   const [newEmail, setNewEmail] = useState('');
   const [allowedEmails, setAllowedEmails] = useState<{id: string, email: string, createdAt: string}[]>([]);
 
+  const router = useRouter();
+
   // Events State
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<{id: string; title: string; location: string; date: string; isLocked: boolean; _count?: { responses: number }}[]>([]);
   // Edit State
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
-  const [editEventData, setEditEventData] = useState<any>({});
+  const [editEventData, setEditEventData] = useState<Partial<{id: string; title: string; location: string; date: string | Date}>>({});
 
   useEffect(() => {
     if (activeTab === 'ALLOWLIST') {
@@ -48,7 +51,7 @@ export default function AdminDashboardPage() {
       } else {
         alert(data.error);
       }
-    } catch (err) {
+    } catch {
       alert("Failed to add email.");
     }
   };
@@ -61,12 +64,12 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         setAllowedEmails(allowedEmails.filter(e => e.email !== email));
       }
-    } catch (err) {
+    } catch {
       alert("Failed to remove email.");
     }
   };
 
-  const handleToggleLock = async (event: any) => {
+  const handleToggleLock = async (event: {id: string; isLocked: boolean}) => {
     try {
       const res = await fetch('/api/admin/events', {
         method: 'PATCH',
@@ -76,7 +79,7 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         setEvents(events.map(e => e.id === event.id ? { ...e, isLocked: !event.isLocked } : e));
       }
-    } catch (err) { alert("Failed to update status"); }
+    } catch { alert("Failed to update status"); }
   };
 
   const handleSaveEdit = async () => {
@@ -92,7 +95,7 @@ export default function AdminDashboardPage() {
       } else {
         alert("Failed to save edits.");
       }
-    } catch (err) { alert("Error saving edits"); }
+    } catch { alert("Error saving edits"); }
   };
 
   const handleDeleteEvent = async (id: string) => {
@@ -102,7 +105,7 @@ export default function AdminDashboardPage() {
       if (res.ok) {
         setEvents(events.filter(e => e.id !== id));
       }
-    } catch (err) { alert("Failed to delete"); }
+    } catch { alert("Failed to delete"); }
   };
 
 
@@ -210,7 +213,7 @@ export default function AdminDashboardPage() {
               <h2>Manage Events & Forms</h2>
               <button 
                 className="btn-primary" 
-                onClick={() => window.location.href = '/admin/events/create'}
+                onClick={() => router.push('/admin/events/create')}
                 style={{ padding: '10px 20px', fontSize: '1rem', fontWeight: 'bold' }}
               >
                 + Create New Event & Form
