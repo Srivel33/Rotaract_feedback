@@ -21,6 +21,9 @@ export default function AdminDashboardPage() {
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [editEventData, setEditEventData] = useState<any>({});
 
+  // Responses State
+  const [responses, setResponses] = useState<any[]>([]);
+
   useEffect(() => {
     if (activeTab === 'ALLOWLIST') {
       fetch('/api/admin/allowlist')
@@ -33,6 +36,12 @@ export default function AdminDashboardPage() {
         .then(res => res.json())
         .then(data => {
           if (data.events) setEvents(data.events);
+        });
+    } else if (activeTab === 'RESPONSES') {
+      fetch('/api/admin/responses')
+        .then(res => res.json())
+        .then(data => {
+          if (data.responses) setResponses(data.responses);
         });
     }
   }, [activeTab]);
@@ -147,7 +156,43 @@ export default function AdminDashboardPage() {
   };
 
   const handleExport = () => {
-    alert("Exporting CSV...");
+    if (responses.length === 0) {
+      alert("No responses to export.");
+      return;
+    }
+
+    // Prepare CSV headers
+    const headers = ["Date", "Member Name", "Member Email", "Role", "Event Title", "Event Date", "Question", "Answer"];
+    
+    // Prepare rows
+    const rows: string[] = [];
+    rows.push(headers.join(","));
+
+    responses.forEach(res => {
+      const date = new Date(res.createdAt).toLocaleDateString();
+      const name = `"${res.user.name}"`;
+      const email = `"${res.user.email}"`;
+      const role = `"${res.user.role}"`;
+      const eventTitle = `"${res.event.title}"`;
+      const eventDate = new Date(res.event.date).toLocaleDateString();
+
+      res.answers.forEach((ans: any) => {
+        const questionText = `"${ans.question.text}"`;
+        // Escape quotes inside answers just in case
+        const answerText = `"${ans.value.replace(/"/g, '""')}"`;
+        
+        rows.push([date, name, email, role, eventTitle, eventDate, questionText, answerText].join(","));
+      });
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8," + rows.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `orca_feedback_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -370,21 +415,31 @@ export default function AdminDashboardPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>Member Name</th>
-                    <th>Role</th>
+                    <th>Date</th>
+                    <th>Member</th>
                     <th>Event</th>
-                    <th>Rating</th>
-                    <th>Emoji</th>
+                    <th>Feedback Summary</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>John Doe</td>
-                    <td>Secretary</td>
-                    <td>Youth Leadership Summit</td>
-                    <td>5 ★</td>
-                    <td>🤩</td>
-                  </tr>
+                  {responses.map(res => (
+                    <tr key={res.id}>
+                      <td>{new Date(res.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <div style={{fontWeight: 'bold', color: '#fff'}}>{res.user.name}</div>
+                        <div style={{fontSize: '0.8rem', color: '#aaa'}}>{res.user.role}</div>
+                      </td>
+                      <td>{res.event.title}</td>
+                      <td>
+                        {res.answers.map((ans: any) => (
+                          <div key={ans.id} style={{fontSize: '0.9rem', marginBottom: '4px'}}>
+                            <strong style={{color: '#888'}}>{ans.question.type}:</strong> {ans.value}
+                          </div>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
+                  {responses.length === 0 && <tr><td colSpan={4} style={{textAlign: 'center'}}>No feedback received yet.</td></tr>}
                 </tbody>
               </table>
             </div>
