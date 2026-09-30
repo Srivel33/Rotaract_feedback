@@ -7,30 +7,30 @@ export default function LandingPage() {
     <div className={styles.pageWrapper}>
       <header className={styles.header}>
         <div className={styles.logoLeft}>
-          <Image src="/orca-logo.png" alt="ORCA Logo" width={180} height={80} style={{ objectFit: 'contain', filter: 'invert(1) brightness(100)' }} />
+          <Image src="/orca-logo.png" alt="ORCA Logo" width={180} height={80} style={{ objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'screen' }} />
         </div>
         <div className={styles.logoRight}>
-          <Image src="/rotaract-logo.png" alt="Rotaract Logo" width={150} height={60} style={{ objectFit: 'contain', filter: 'invert(1) brightness(100)' }} />
+          <Image src="/rotaract-logo.png" alt="Rotaract Logo" width={150} height={60} style={{ objectFit: 'contain', filter: 'invert(1)', mixBlendMode: 'screen' }} />
         </div>
       </header>
 
       <main className={styles.mainContent}>
         <div className={styles.textContent}>
           <h1 className={styles.title}>
-            Your feedback<br/>
-            shapes our<br/>
-            <span className={styles.highlight}>future!</span>
+            Empower your<br/>
+            Rotaract<br/>
+            <span className={styles.highlight}>journey</span>
           </h1>
           <p className={styles.subtitle}>
-            Share your voice.<br />
-            Make an impact.
+            Every ripple creates a wave.<br />
+            Share your insights to help us build better events, stronger communities, and impactful actions.
           </p>
         </div>
 
         <div className={styles.illustrationWrapper}>
           <div className={styles.speechBubble}>
-            Hi! I&apos;m <strong>Orca</strong>.<br />
-            I&apos;ll guide you!
+            Hi, I&apos;m <strong>Orca</strong>!<br />
+            Ready to make some waves?
           </div>
           <div className={styles.mascot}>
             <Image src="/mascot.jpg" alt="Orca Mascot" width={250} height={250} style={{ objectFit: 'contain', mixBlendMode: 'screen', borderRadius: '50%' }} />
