@@ -13,7 +13,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 3rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   padding-bottom: 1.5rem;
 }
 
@@ -42,9 +42,9 @@
 }
 
 .statsCard {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.02);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   padding: 2rem;
   height: fit-content;
@@ -53,7 +53,7 @@
 .statsCard h3 {
   margin-top: 0;
   color: var(--color-ocean-blue-light);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   padding-bottom: 1rem;
 }
 
@@ -64,9 +64,9 @@
 }
 
 .feedCard {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.02);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 16px;
   padding: 2rem;
 }
@@ -86,8 +86,8 @@
 }
 
 .feedItem {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0,0,0,0.08);
   border-radius: 16px;
   padding: 1.5rem;
   transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
@@ -95,15 +95,15 @@
 
 .feedItem:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 
 .feedHeader {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
-  border-bottom: 1px dashed rgba(255,255,255,0.1);
+  border-bottom: 1px dashed rgba(0,0,0,0.1);
   padding-bottom: 0.5rem;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .answerBlock {
-  background: rgba(255,255,255,0.02);
+  background: rgba(0,0,0,0.03);
   padding: 10px;
   border-radius: 8px;
   border-left: 2px solid var(--color-ocean-blue);
@@ -128,5 +128,5 @@
 
 .answerValue {
   font-size: 1rem;
-  color: #fff;
+  color: #333;
 }

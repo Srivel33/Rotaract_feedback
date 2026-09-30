@@ -148,7 +148,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
                 {q.type === 'RADIO' && q.options && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', marginTop: '0.5rem' }}>
                     {JSON.parse(q.options).map((opt: string, i: number) => (
-                      <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ccc', cursor: 'pointer', fontSize: '1rem' }}>
+                      <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#555', cursor: 'pointer', fontSize: '1rem' }}>
                         <input 
                           type="radio" 
                           name={`q_${q.id}`} 
@@ -168,7 +168,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
                     {JSON.parse(q.options).map((opt: string, i: number) => {
                       const isChecked = (answers[q.id] || '').split(',').includes(opt);
                       return (
-                        <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#ccc', cursor: 'pointer', fontSize: '1rem' }}>
+                        <label key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#555', cursor: 'pointer', fontSize: '1rem' }}>
                           <input 
                             type="checkbox" 
                             value={opt} 
@@ -188,7 +188,7 @@ export default function EventFeedbackPage({ params }: { params: Promise<{ id: st
                     className={styles.input} 
                     value={answers[q.id] || ''} 
                     onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-                    style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.5)', color: '#fff', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.2)' }}
+                    style={{ width: '100%', padding: '12px', background: 'rgba(0,0,0,0.03)', color: '#333', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)' }}
                   >
                     <option value="" disabled>Select an option</option>
                     {JSON.parse(q.options).map((opt: string, i: number) => (

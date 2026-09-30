@@ -126,7 +126,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
             📥 Export CSV
           </button>
           <Link href="/admin/dashboard">
-            <button style={{ background: 'transparent', border: '1px solid #444', color: '#aaa', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
+            <button style={{ background: 'transparent', border: '1px solid #ccc', color: '#555', padding: '10px 20px', borderRadius: '8px', cursor: 'pointer' }}>
               Back to Dashboard
             </button>
           </Link>
@@ -140,7 +140,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
           <h3>Event Overview</h3>
           <div className={styles.statBox}>
             <span style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--color-ocean-blue-light)' }}>{responses.length}</span>
-            <span style={{ color: '#aaa', fontSize: '0.9rem' }}>Total Responses</span>
+            <span style={{ color: '#555', fontSize: '0.9rem' }}>Total Responses</span>
           </div>
 
           {ratingQuestion && (
@@ -148,8 +148,8 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
               <span style={{ fontSize: '2rem', fontWeight: 'bold', color: '#eab308' }}>
                 {avgRating.toFixed(1)} ★
               </span>
-              <span style={{ color: '#aaa', fontSize: '0.9rem' }}>Average Rating</span>
-              <div style={{ background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px', width: '100%', marginTop: '10px' }}>
+              <span style={{ color: '#555', fontSize: '0.9rem' }}>Average Rating</span>
+              <div style={{ background: 'rgba(0,0,0,0.1)', height: '8px', borderRadius: '4px', width: '100%', marginTop: '10px' }}>
                 <div style={{ background: '#eab308', height: '100%', borderRadius: '4px', width: `${(avgRating / 5) * 100}%` }}></div>
               </div>
             </div>
@@ -157,14 +157,14 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
 
           {emojiQuestion && Object.keys(emojiCounts).length > 0 && (
             <div style={{ marginTop: '2rem' }}>
-              <h4 style={{ color: '#aaa', marginBottom: '1rem' }}>Sentiment Breakdown</h4>
+              <h4 style={{ color: '#555', marginBottom: '1rem' }}>Sentiment Breakdown</h4>
               {Object.entries(emojiCounts).map(([emoji, count]) => (
                 <div key={emoji} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', gap: '10px' }}>
                   <span style={{ fontSize: '1.5rem' }}>{emoji}</span>
-                  <div style={{ flex: 1, background: 'rgba(255,255,255,0.1)', height: '12px', borderRadius: '6px' }}>
+                  <div style={{ flex: 1, background: 'rgba(0,0,0,0.1)', height: '12px', borderRadius: '6px' }}>
                     <div style={{ background: 'var(--color-ocean-blue-light)', height: '100%', borderRadius: '6px', width: `${(count / responses.length) * 100}%` }}></div>
                   </div>
-                  <span style={{ fontSize: '0.9rem', color: '#fff', width: '30px', textAlign: 'right' }}>{count}</span>
+                  <span style={{ fontSize: '0.9rem', color: '#333', width: '30px', textAlign: 'right' }}>{count}</span>
                 </div>
               ))}
             </div>
@@ -173,16 +173,16 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
             const stats = choiceStats[q.id];
             return (
               <div key={q.id} style={{ marginTop: '2rem' }}>
-                <h4 style={{ color: '#aaa', marginBottom: '1rem', fontSize: '1rem' }}>{q.text}</h4>
+                <h4 style={{ color: '#555', marginBottom: '1rem', fontSize: '1rem' }}>{q.text}</h4>
                 {Object.entries(stats).map(([option, count]) => {
                   const percentage = responses.length > 0 ? Math.round((count / responses.length) * 100) : 0;
                   return (
                     <div key={option} style={{ marginBottom: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '6px' }}>
-                        <span style={{ color: '#fff' }}>{option}</span>
-                        <span style={{ color: '#aaa' }}>{count} ({percentage}%)</span>
+                        <span style={{ color: '#333' }}>{option}</span>
+                        <span style={{ color: '#555' }}>{count} ({percentage}%)</span>
                       </div>
-                      <div style={{ width: '100%', background: 'rgba(255,255,255,0.1)', height: '8px', borderRadius: '4px' }}>
+                      <div style={{ width: '100%', background: 'rgba(0,0,0,0.1)', height: '8px', borderRadius: '4px' }}>
                         <div style={{ background: 'var(--color-ocean-blue-light)', height: '100%', borderRadius: '4px', width: `${percentage}%`, transition: 'width 0.5s ease-in-out' }}></div>
                       </div>
                     </div>
@@ -195,15 +195,15 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
 
         {/* FEED SECTION */}
         <div className={styles.feedCard}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
             <h3 style={{ margin: 0, border: 'none', padding: 0 }}>Detailed Feedback Feed</h3>
             
-            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', background: 'rgba(0,0,0,0.05)', padding: '4px', borderRadius: '8px', border: '1px solid rgba(0,0,0,0.1)' }}>
               <button 
                 onClick={() => setViewMode('respondent')}
                 style={{ 
                   background: viewMode === 'respondent' ? 'var(--color-ocean-blue)' : 'transparent', 
-                  color: viewMode === 'respondent' ? '#fff' : '#aaa', 
+                  color: viewMode === 'respondent' ? '#333' : '#777', 
                   border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', transition: '0.2s' 
                 }}
               >
@@ -213,7 +213,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
                 onClick={() => setViewMode('question')}
                 style={{ 
                   background: viewMode === 'question' ? 'var(--color-ocean-blue)' : 'transparent', 
-                  color: viewMode === 'question' ? '#fff' : '#aaa', 
+                  color: viewMode === 'question' ? '#333' : '#777', 
                   border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', transition: '0.2s' 
                 }}
               >
@@ -223,7 +223,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
           </div>
           
           {responses.length === 0 ? (
-            <p style={{ color: '#aaa', fontStyle: 'italic', marginTop: '1rem' }}>No feedback submitted yet.</p>
+            <p style={{ color: '#555', fontStyle: 'italic', marginTop: '1rem' }}>No feedback submitted yet.</p>
           ) : viewMode === 'respondent' ? (
             <div className={styles.feedList}>
               {responses.map((res) => (
@@ -262,12 +262,12 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
 
                 return (
                   <div key={q.id} className={styles.feedItem} style={{ borderLeft: '4px solid var(--color-ocean-blue-light)' }}>
-                    <h4 style={{ margin: '0 0 1rem 0', color: '#fff' }}>{q.text}</h4>
+                    <h4 style={{ margin: '0 0 1rem 0', color: '#333' }}>{q.text}</h4>
                     <div className={styles.feedAnswers}>
                       {questionAnswers.map((qa: {user: {name: string}, value: string, date: string}, idx: number) => (
-                        <div key={idx} className={styles.answerBlock} style={{ borderLeft: 'none', background: 'rgba(255,255,255,0.03)' }}>
+                        <div key={idx} className={styles.answerBlock} style={{ borderLeft: 'none', background: 'rgba(0,0,0,0.03)' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                            <span style={{ fontSize: '0.8rem', color: '#aaa' }}>{qa.user.name}</span>
+                            <span style={{ fontSize: '0.8rem', color: '#555' }}>{qa.user.name}</span>
                             <span style={{ fontSize: '0.75rem', color: '#666' }}>{new Date(qa.date).toLocaleDateString()}</span>
                           </div>
                           <div className={styles.answerValue}>

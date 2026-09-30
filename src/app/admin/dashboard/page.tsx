@@ -150,7 +150,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className={styles.card}>
               <h3>Authorize a New Member</h3>
-              <p style={{ color: '#aaa', marginBottom: '1rem', fontSize: '0.9rem' }}>
+              <p style={{ color: '#555', marginBottom: '1rem', fontSize: '0.9rem' }}>
                 Only emails added here can log into the participant portal.
               </p>
               <form onSubmit={handleAddEmail} className={styles.formGroup}>
@@ -240,7 +240,7 @@ export default function AdminDashboardPage() {
                           <td>-</td>
                           <td>
                             <button onClick={handleSaveEdit} style={{color: '#10b981', marginRight: '10px', background: 'transparent', border: 'none', cursor: 'pointer'}}>💾 Save</button>
-                            <button onClick={() => setEditingEventId(null)} style={{color: '#aaa', background: 'transparent', border: 'none', cursor: 'pointer'}}>Cancel</button>
+                            <button onClick={() => setEditingEventId(null)} style={{color: '#555', background: 'transparent', border: 'none', cursor: 'pointer'}}>Cancel</button>
                           </td>
                         </>
                       ) : (
@@ -255,10 +255,10 @@ export default function AdminDashboardPage() {
                             {event.isLocked ? 'Locked' : 'Active'}
                           </td>
                           <td>
-                            <button onClick={() => { setEditingEventId(event.id); setEditEventData(event); }} style={{marginRight: '1rem', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer'}}>
+                            <button onClick={() => { setEditingEventId(event.id); setEditEventData(event); }} style={{marginRight: '1rem', background: 'transparent', border: 'none', color: '#333', cursor: 'pointer'}}>
                               ✏️ Edit
                             </button>
-                            <button onClick={() => handleToggleLock(event)} style={{marginRight: '1rem', background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer'}}>
+                            <button onClick={() => handleToggleLock(event)} style={{marginRight: '1rem', background: 'transparent', border: 'none', color: '#333', cursor: 'pointer'}}>
                               {event.isLocked ? '🔓 Unlock' : '🔒 Lock'}
                             </button>
                             <button onClick={() => handleDeleteEvent(event.id)} style={{color: '#ff4d4f', background: 'transparent', border: 'none', cursor: 'pointer'}}>
@@ -281,7 +281,7 @@ export default function AdminDashboardPage() {
           <section>
             <div className={styles.sectionHeader}>
               <h1>Event Analytics & Feedback</h1>
-              <p style={{ color: '#aaa', marginTop: '0.5rem' }}>Select an event to view detailed feedback, visualizations, and export specific CSV data.</p>
+              <p style={{ color: '#555', marginTop: '0.5rem' }}>Select an event to view detailed feedback, visualizations, and export specific CSV data.</p>
             </div>
             
             <div className={styles.card}>
@@ -314,7 +314,7 @@ export default function AdminDashboardPage() {
                         <Link href={`/admin/event/${event.id}`}>
                           <button style={{ 
                             background: 'var(--color-ocean-blue)', 
-                            color: '#fff', 
+                            color: '#333', 
                             border: 'none', 
                             padding: '8px 16px', 
                             borderRadius: '8px', 

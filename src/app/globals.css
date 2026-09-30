@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --color-jet-black: #050505;
-  --color-jet-black-light: #121212;
-  --color-off-white: #f2f0ef; /* Taken from the user's reference color */
-  --color-ocean-blue: #0077b6; /* Primary accent */
+  --color-jet-black: #f8f9fa;
+  --color-jet-black-light: #ffffff;
+  --color-off-white: #1a1a1a; 
+  --color-ocean-blue: #0077b6; 
   --color-ocean-blue-light: #48cae4;
   
   --font-heading: 'Outfit', sans-serif;
@@ -59,7 +59,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary {
   display: inline-block;
   background: linear-gradient(135deg, var(--color-ocean-blue), var(--color-ocean-blue-light));
-  color: var(--color-jet-black);
+  color: #ffffff;
   padding: 14px 32px;
   border-radius: 50px;
   font-family: var(--font-heading);
@@ -78,10 +78,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   border-radius: 20px;
   padding: 24px;
 }

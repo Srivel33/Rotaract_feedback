@@ -6,8 +6,8 @@
 
 .sidebar {
   width: 250px;
-  background: rgba(255, 255, 255, 0.05);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
@@ -16,7 +16,7 @@
 .sidebarHeader {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
@@ -36,7 +36,7 @@
 .navButton {
   background: transparent;
   border: none;
-  color: #a0a0a0;
+  color: #555555;
   text-align: left;
   padding: 10px 15px;
   border-radius: 8px;
@@ -47,13 +47,13 @@
 }
 
 .navButton:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--color-off-white);
 }
 
 .navButton.active {
   background: var(--color-ocean-blue);
-  color: var(--color-jet-black);
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -77,8 +77,8 @@
 
 /* Card layout for sections */
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -92,8 +92,8 @@
 
 .input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   padding: 10px 15px;
   border-radius: 8px;
   color: var(--color-off-white);
@@ -113,7 +113,7 @@
 .table th, .table td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .table th {
@@ -123,5 +123,5 @@
 }
 
 .table td {
-  color: #ccc;
+  color: #555555;
 }
