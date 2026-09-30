@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect, use, useRef } from 'react';
 
 import Link from 'next/link';
 import styles from './event-details.module.css';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 interface EventData {
   id: string; title: string; location: string; date: string;
@@ -23,6 +26,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
   const [responses, setResponses] = useState<ResponseData[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'respondent' | 'question'>('respondent');
+  const dashboardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Promise.all([
@@ -66,6 +70,17 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!dashboardRef.current) return;
+    const canvas = await html2canvas(dashboardRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`${eventData?.title.replace(/\s+/g, '_')}_Report.pdf`);
   };
 
   if (loading) return <div style={{ color: 'white', padding: '3rem', textAlign: 'center' }}>Loading Event Data...</div>;
@@ -114,6 +129,8 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
     });
   });
 
+  const COLORS = ['#0077b6', '#48cae4', '#90e0ef', '#00b4d8', '#03045e', '#023e8a'];
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -122,6 +139,9 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
           <p>{new Date(eventData.date).toLocaleDateString()} • {eventData.location}</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
+          <button onClick={handleDownloadPDF} className="btn-primary" style={{ background: '#ef4444', color: '#fff', padding: '10px 20px', fontSize: '0.9rem' }}>
+            📄 Download PDF
+          </button>
           <button onClick={handleExport} className="btn-primary" style={{ background: '#10b981', color: '#fff', padding: '10px 20px', fontSize: '0.9rem' }}>
             📥 Export CSV
           </button>
@@ -133,7 +153,7 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
         </div>
       </div>
 
-      <div className={styles.dashboardGrid}>
+      <div className={styles.dashboardGrid} ref={dashboardRef}>
         
         {/* STATS VISUALIZATION */}
         <div className={styles.statsCard}>
@@ -158,36 +178,45 @@ export default function AdminEventDetailsPage({ params }: { params: Promise<{ id
           {emojiQuestion && Object.keys(emojiCounts).length > 0 && (
             <div style={{ marginTop: '2rem' }}>
               <h4 style={{ color: '#555', marginBottom: '1rem' }}>Sentiment Breakdown</h4>
-              {Object.entries(emojiCounts).map(([emoji, count]) => (
-                <div key={emoji} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px', gap: '10px' }}>
-                  <span style={{ fontSize: '1.5rem' }}>{emoji}</span>
-                  <div style={{ flex: 1, background: 'rgba(0,0,0,0.1)', height: '12px', borderRadius: '6px' }}>
-                    <div style={{ background: 'var(--color-ocean-blue-light)', height: '100%', borderRadius: '6px', width: `${(count / responses.length) * 100}%` }}></div>
-                  </div>
-                  <span style={{ fontSize: '0.9rem', color: '#333', width: '30px', textAlign: 'right' }}>{count}</span>
-                </div>
-              ))}
+              <div style={{ height: 250, width: '100%' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={Object.entries(emojiCounts).map(([name, value]) => ({ name, value }))}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {Object.keys(emojiCounts).map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <RechartsTooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
           {choiceQuestions.map(q => {
             const stats = choiceStats[q.id];
+            const data = Object.entries(stats).map(([name, value]) => ({ name, value }));
             return (
               <div key={q.id} style={{ marginTop: '2rem' }}>
                 <h4 style={{ color: '#555', marginBottom: '1rem', fontSize: '1rem' }}>{q.text}</h4>
-                {Object.entries(stats).map(([option, count]) => {
-                  const percentage = responses.length > 0 ? Math.round((count / responses.length) * 100) : 0;
-                  return (
-                    <div key={option} style={{ marginBottom: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '6px' }}>
-                        <span style={{ color: '#333' }}>{option}</span>
-                        <span style={{ color: '#555' }}>{count} ({percentage}%)</span>
-                      </div>
-                      <div style={{ width: '100%', background: 'rgba(0,0,0,0.1)', height: '8px', borderRadius: '4px' }}>
-                        <div style={{ background: 'var(--color-ocean-blue-light)', height: '100%', borderRadius: '4px', width: `${percentage}%`, transition: 'width 0.5s ease-in-out' }}></div>
-                      </div>
-                    </div>
-                  );
-                })}
+                <div style={{ height: 250, width: '100%' }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="name" type="category" width={100} />
+                      <RechartsTooltip />
+                      <Bar dataKey="value" fill="var(--color-ocean-blue)" radius={[0, 4, 4, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             );
           })}

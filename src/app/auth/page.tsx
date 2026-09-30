@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import styles from './auth.module.css';
 
 export default function AuthPage() {
@@ -56,6 +57,19 @@ export default function AuthPage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           
+          <button 
+            type="button"
+            onClick={() => signIn('google', { callbackUrl: '/dashboard' })} 
+            className={`btn-primary`} 
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', background: '#fff', color: '#333', border: '1px solid #ccc' }}
+          >
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" style={{ width: '20px', height: '20px' }} />
+            Continue with Google
+          </button>
+
+          <div style={{ textAlign: 'center', color: '#888', margin: '0.5rem 0', fontSize: '0.9rem' }}>
+            — or use email —
+          </div>
           <div className={styles.inputGroup}>
             <label htmlFor="name" className={styles.label}>Full Name</label>
             <input 
