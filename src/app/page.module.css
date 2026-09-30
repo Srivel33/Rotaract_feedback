@@ -56,40 +56,34 @@
   align-items: center;
   gap: 0.6rem;
 }
-.brandName {
-  font-family: var(--font-heading);
-  font-size: 1.4rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
-.brandSub {
-  font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 1.5px;
-  color: #90e0ef;
-  text-transform: uppercase;
-  margin-top: 3px;
+.cyanLogo {
+  object-fit: contain;
+  filter: invert(1) sepia(1) saturate(5) hue-rotate(130deg) brightness(1.2);
+  mix-blend-mode: screen;
 }
 
-.rotaractBadge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  opacity: 0.85;
+.cyanLogoMascot {
+  object-fit: contain;
+  filter: invert(1) sepia(1) saturate(3) hue-rotate(155deg) brightness(1.2);
+  mix-blend-mode: screen;
+  animation: float 5s ease-in-out infinite;
 }
-.rotaractText {
-  font-size: 0.75rem;
-  color: #90e0ef;
-  line-height: 1.3;
-  text-align: left;
+
+.headerLogoWrapper {
+  position: relative;
+  width: 160px;
+  height: 60px;
 }
-.rotaractText small {
-  font-size: 0.65rem;
-  opacity: 0.7;
+.headerLogoWrapperRight {
+  position: relative;
+  width: 140px;
+  height: 50px;
+}
+.mainMascotWrapper {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  z-index: 1;
 }
 
 /* ── Hero ── */
@@ -172,30 +166,18 @@
   position: relative;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   animation: fadeSlideUp 0.8s ease 0.3s both;
 }
 
 .mascotGlow {
   position: absolute;
-  bottom: 0;
   width: 80%;
-  height: 60%;
-  background: radial-gradient(ellipse, rgba(0,229,255,0.2) 0%, transparent 70%);
+  height: 80%;
+  background: radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 60%);
   border-radius: 50%;
   z-index: 0;
-  filter: blur(20px);
-}
-
-.mascotImg {
-  position: relative;
-  z-index: 1;
-  object-fit: contain;
-  animation: float 5s ease-in-out infinite;
-  /* Remove checkerboard by blending */
-  mix-blend-mode: screen;
-  border-radius: 0;
-  filter: drop-shadow(0 20px 40px rgba(0, 180, 216, 0.4));
+  filter: blur(25px);
 }
 
 @keyframes float {
@@ -239,8 +221,8 @@
   .mascotArea {
     order: -1;   /* put mascot above text on mobile */
   }
-  .mascotImg {
-    width: 220px !important;
-    height: 220px !important;
+  .mainMascotWrapper {
+    width: 250px;
+    height: 250px;
   }
 }
