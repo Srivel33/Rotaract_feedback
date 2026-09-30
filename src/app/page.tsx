@@ -1,66 +1,63 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import styles from './page.module.css';
 
 export default function LandingPage() {
   return (
     <div className={styles.pageWrapper}>
-      {/* Animated Mesh Gradient Background */}
-      <div className={styles.meshBackground}>
-        <div className={styles.meshBlob1}></div>
-        <div className={styles.meshBlob2}></div>
-        <div className={styles.meshBlob3}></div>
-      </div>
+      <header className={styles.header}>
+        <div className={styles.logoLeft}>
+          <Image src="/orca-logo.png" alt="ORCA Logo" width={180} height={80} style={{ objectFit: 'contain', filter: 'invert(1) brightness(100)' }} />
+        </div>
+        <div className={styles.logoRight}>
+          <Image src="/rotaract-logo.png" alt="Rotaract Logo" width={150} height={60} style={{ objectFit: 'contain', filter: 'invert(1) brightness(100)' }} />
+        </div>
+      </header>
 
-      <main className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <div className={`${styles.logo} ${styles.stagger1}`}>Rotaract SNSCT</div>
-          
-          <div className={`${styles.mascotWrapper} ${styles.stagger2}`}>
-            <div className={styles.mascotHalo}></div>
-            <div className={styles.mascotIcon}>🐬</div> 
-          </div>
-
-          <h1 className={`${styles.title} ${styles.stagger3}`}>
-            ORCA
+      <main className={styles.mainContent}>
+        <div className={styles.textContent}>
+          <h1 className={styles.title}>
+            Your feedback<br/>
+            shapes our<br/>
+            <span className={styles.highlight}>future!</span>
           </h1>
-          <p className={`${styles.subtitle} ${styles.stagger4}`}>
-            One Ripple, Countless Action. <br/>
-            Your feedback shapes our future. Make your ripple today.
+          <p className={styles.subtitle}>
+            Share your voice.<br />
+            Make an impact.
           </p>
+        </div>
 
-          <div className={`${styles.actions} ${styles.stagger5}`}>
-            <Link href="/auth" className={styles.magneticButton}>
-              Let&apos;s Begin
-              <div className={styles.buttonShine}></div>
-            </Link>
+        <div className={styles.illustrationWrapper}>
+          <div className={styles.speechBubble}>
+            Hi! I&apos;m <strong>Orca</strong>.<br />
+            I&apos;ll guide you!
+          </div>
+          <div className={styles.mascot}>
+            <Image src="/mascot.jpg" alt="Orca Mascot" width={250} height={250} style={{ objectFit: 'contain', mixBlendMode: 'screen', borderRadius: '50%' }} />
           </div>
         </div>
       </main>
 
-      <section className={styles.howItWorksSection}>
-        <h2 className={styles.sectionTitle}>How it works</h2>
-        <div className={styles.cardsGrid}>
-          <div className={styles.infoCard}>
-            <div className={styles.cardIcon}>🔒</div>
-            <h3>1. Log In Seamlessly</h3>
-            <p>Access the platform securely using your Rotaract email or Google account.</p>
-          </div>
-          <div className={styles.infoCard}>
-            <div className={styles.cardIcon}>📅</div>
-            <h3>2. Pick Your Event</h3>
-            <p>Browse through recent Rotaract events you attended and select one.</p>
-          </div>
-          <div className={styles.infoCard}>
-            <div className={styles.cardIcon}>🌊</div>
-            <h3>3. Make Your Ripple</h3>
-            <p>Provide interactive feedback and help us shape future initiatives.</p>
-          </div>
-        </div>
-      </section>
-      
-      <footer className={styles.footer}>
-        <p>© {new Date().getFullYear()} Rotaract Club of SNSCT. All rights reserved.</p>
-      </footer>
+      <div className={styles.footerAction}>
+        <Link href="/auth" className={styles.beginButton}>
+          Let&apos;s Begin &rarr;
+        </Link>
+      </div>
+
+      {/* Decorative SVG Waves at the bottom */}
+      <div className={styles.wavesContainer}>
+         <svg className={styles.waves} xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shapeRendering="auto">
+            <defs>
+               <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g className={styles.parallax}>
+               <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 180, 216, 0.2)" />
+               <use href="#gentle-wave" x="48" y="3" fill="rgba(0, 180, 216, 0.4)" />
+               <use href="#gentle-wave" x="48" y="5" fill="rgba(0, 180, 216, 0.6)" />
+               <use href="#gentle-wave" x="48" y="7" fill="var(--color-ocean-blue)" />
+            </g>
+         </svg>
+      </div>
     </div>
   );
 }
